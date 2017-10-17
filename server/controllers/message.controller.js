@@ -24,6 +24,7 @@ function load(req, res, next, id) {
 /**
  * Get message
  * @returns {Message}
+ * when message ID specified in the url
  */
 function get(req, res) {
     if (req.message) {
@@ -74,29 +75,34 @@ function send(req, res, next) {
       .catch(e => next(e));
 }
 
-function list(req, res) {
+function list() {}
+
+
+/**
+ * Return count and message IDs of all messages belonging to owner.
+ * Return count and message IDs of unread messages belonging to owner.
+ * "Owner" will not exist as part of url once this integrates with auth service.
+ */
+function count(req,res) {
     let queryObject = {};
+    let whereObject = {};
+    let countObject = {};
 
-    if (req.query.from) {
-        let whereObject = {};
-        whereObject.from = req.query.from;
+    if(req.query.option == "unread"){
+        whereObject.owner = req.query.owner;
+        whereObject.readAt = null;
         queryObject.where = whereObject;
-    }
-
-    if (req.query.limit) {
-        queryObject.limit = req.query.limit;
-    }
-
-    if (req.query.summary) {
-        queryObject.attributes = ['subject', 'from', 'createdAt'];
-    }
-
-    Message.findAll(queryObject)
-           .then(results => res.send(results));
-}
-
-function count() {
-    // use findAndCountAll
+        queryObject.attributes = ['id'];
+    }else if(req.query.option == "all"){
+        whereObject.owner = req.query.owner;
+        queryObject.where = whereObject;
+        queryObject.attributes = ['id'];
+    }//else if(req.query.option == "both"){
+    //}
+    
+    Message.findAndCountAll(queryObject)
+        .then(result =>
+            res.send(result));
 }
 
 function remove() {}
