@@ -14,6 +14,7 @@ function load(req, res, next, id) {
             e.status = httpStatus.NOT_FOUND;
             return next(e);
         }
+        console.log("load-req.message: "+req.message);
         req.message = message; // eslint-disable-line no-param-reassign
         return next();
     })
@@ -25,7 +26,12 @@ function load(req, res, next, id) {
  * @returns {Message}
  */
 function get(req, res) {
-    return res.json(req.message);
+    if (req.message) {
+        req.message.update({
+            readAt: new Date(),
+        });
+    }
+    return res.send(req.message);
 }
 
 /**
@@ -49,7 +55,12 @@ function send(req, res, next) {
             subject: req.body.subject,
             message: req.body.message,
             owner: req.body.to[i],
+<<<<<<< HEAD
+            created: new Date(),
+            isDeleted: false,
+=======
             createdAt: createdTime,
+>>>>>>> develop
         });
     }
 
@@ -62,6 +73,14 @@ function send(req, res, next) {
         subject: req.body.subject,
         message: req.body.message,
         owner: req.body.from,
+<<<<<<< HEAD
+        created: new Date(),
+        readAt: new Date(),
+        isDeleted: false,
+    }).save()
+      .then(savedMessage => res.json(savedMessage))
+      .catch(e => next(e));
+=======
         createdAt: createdTime,
         readAt: createdTime,
     });
@@ -70,12 +89,51 @@ function send(req, res, next) {
     Promise
         .join(bulkCreate, messageCreate, (bulkResult, messageResult) => res.json(messageResult))
         .catch(e => next(e));
+>>>>>>> develop
 }
 
-function list() {}
+// returns a list of messages
+// Currently, there is no distinction between a message created by a user, &
+// a message sent by that user, since he is the 'owner' in both cases.
+// This needs integration with auth microservice
+// Query paramters: 'from', 'summary', 'limit'
+function list(req, res) {
+    const queryObject = {};
+
+    if (req.query.from) {
+        const whereObject = {};
+        whereObject.from = req.query.from;
+        queryObject.where = whereObject;
+    }
+
+    if (req.query.limit) {
+        queryObject.limit = req.query.limit;
+    }
+
+    if (req.query.summary) {
+        queryObject.attributes = ['subject', 'from', 'createdAt'];
+    }
+
+    Message
+        .findAll(queryObject)
+        .then(results => res.send(results));
+}
 
 function count() {}
 
-function remove() {}
+/**
+ * Soft delete
+ * sets isDelete of message with the userID to true
+ * @returns {Message}
+ */
+function remove(req,res) {
+    if (req.message) {
+    console.log("req.message: "+JSON.stringify(req.message));
+        req.message.update({
+            isDeleted: true,
+        });
+    }
+    return res.send(req.message);
+}
 
 export default { send, get, list, count, remove, load };

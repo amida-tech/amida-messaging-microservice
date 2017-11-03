@@ -53,7 +53,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: true,
         },
-    });
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        }
+      },
+      {
+        defaultScope: {
+          where: {
+            isDeleted: false
+          }
+        }
+      }
+    );
+
+    // Class methods
 
     return Message;
 };
