@@ -8,11 +8,21 @@ const router = express.Router(); // eslint-disable-line new-cap
 router.route('/send')
     .post(validate(paramValidation.sendMessage), messageCtrl.send);
 
-// TODO: needs to be clear that userId is the owner
-router.route('/list/:userId')
+/**
+ * url params:
+ * - limit: number of messages to return
+ * - from: filter on message sender by username
+ * - summary: boolean, can return a summary version of messages
+ */
+router.route('/list/')
     .get(messageCtrl.list);
-// TODO: needs to be clear that userId is the owner
-router.route('/count/:userId')
+
+/**
+ * url params:
+ * - owner: username of owner of messages to count
+ * - option: unread/all
+ */
+router.route('/count/')
     .get(messageCtrl.count);
 
 router.route('/get/:messageId')

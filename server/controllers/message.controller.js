@@ -25,7 +25,12 @@ function load(req, res, next, id) {
  * @returns {Message}
  */
 function get(req, res) {
-    return res.json(req.message);
+    if (req.message) {
+        req.message.update({
+            readAt: new Date(),
+        });
+    }
+    return res.send(req.message);
 }
 
 /**
@@ -72,9 +77,36 @@ function send(req, res, next) {
         .catch(e => next(e));
 }
 
-function list() {}
+// returns a list of messages
+// Currently, there is no distinction between a message created by a user, &
+// a message sent by that user, since he is the 'owner' in both cases.
+// This needs integration with auth microservice
+// Query paramters: 'from', 'summary', 'limit'
+function list(req, res) {
+    const queryObject = {};
 
-function count() {}
+    if (req.query.from) {
+        const whereObject = {};
+        whereObject.from = req.query.from;
+        queryObject.where = whereObject;
+    }
+
+    if (req.query.limit) {
+        queryObject.limit = req.query.limit;
+    }
+
+    if (req.query.summary) {
+        queryObject.attributes = ['subject', 'from', 'createdAt'];
+    }
+
+    Message
+        .findAll(queryObject)
+        .then(results => res.send(results));
+}
+
+function count() {
+    // use findAndCountAll
+}
 
 function remove() {}
 
