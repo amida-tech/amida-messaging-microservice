@@ -139,6 +139,7 @@ function count(req,res) {
     Message.findAndCountAll(queryObject)
         .then(result =>
             res.send(result));
+}
     
 /**
  * Soft delete

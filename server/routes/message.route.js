@@ -3,6 +3,7 @@ import validate from 'express-validation';
 import paramValidation from '../../config/param-validation';
 import messageCtrl from '../controllers/message.controller';
 import auth from '../../config/passport';
+export default router;
 
 const passportAuth = auth();
 const router = express.Router(); // eslint-disable-line new-cap
@@ -40,5 +41,3 @@ router.route('/archive/:messageId')
 
 /** Load message when API with route parameter is hit */
 router.param('messageId', messageCtrl.load);
-
-export default router;
