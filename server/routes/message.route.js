@@ -1,17 +1,18 @@
 import express from 'express';
 import validate from 'express-validation';
+import passport from 'passport';
 import paramValidation from '../../config/param-validation';
 import messageCtrl from '../controllers/message.controller';
-import auth from '../../config/passport';
-export default router;
 
-const passportAuth = auth();
 const router = express.Router(); // eslint-disable-line new-cap
 
-router.use(passportAuth.authenticate);
+router.use(passport.authenticate('jwt', { session: false }));
 
 router.route('/send')
     .post(validate(paramValidation.sendMessage), messageCtrl.send);
+
+router.route('/reply/:messageId')
+    .post(validate(paramValidation.replyMessage), messageCtrl.reply);
 
 /**
  * url params:
@@ -19,7 +20,7 @@ router.route('/send')
  * - from: filter on message sender by username
  * - summary: boolean, can return a summary version of messages
  */
-router.route('/list/')
+router.route('/list')
     .get(messageCtrl.list);
 
 /**
@@ -41,3 +42,5 @@ router.route('/archive/:messageId')
 
 /** Load message when API with route parameter is hit */
 router.param('messageId', messageCtrl.load);
+
+export default router;
