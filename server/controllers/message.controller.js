@@ -187,6 +187,7 @@ function list(req, res) {
 function count(req, res) {
     const queryObject = {};
     const whereObject = {};
+    // const countObject = {};
 
     if (req.query.option === 'unread') {
         whereObject.owner = req.query.owner;
