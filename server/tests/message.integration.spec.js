@@ -357,9 +357,9 @@ describe('Message API:', function () {
 
     });
     
-    // describe('GET /message/count/:userId', function () {
+    //describe('GET /message/count', function () {
 
-    //     let userId;
+    //let option;
 
     //     before(done => {
     //         Message.destroy({
@@ -373,6 +373,16 @@ describe('Message API:', function () {
     //                 });
     //         });
     //     });
+    // before(() => request(app)
+    //         .post(`${baseURL}/message/send`)
+    //         .set('Authorization', `Bearer ${auth}`)
+    //         .send(testMessageObject)
+    //         .expect(httpStatus.OK)
+    //         .then((message) => {
+    //             messageId = message.body.id;
+    //             return;
+    //         })
+    //     );
 
     //     it('should return OK', done => {
     //         request(app)

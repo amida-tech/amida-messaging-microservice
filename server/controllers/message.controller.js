@@ -177,7 +177,6 @@ function list(req, res) {
     }
 }
 
-//function count() {}
 /**
  * Return count and message IDs of all messages belonging to owner.
  * Return count and message IDs of unread messages belonging to owner.
@@ -186,19 +185,17 @@ function list(req, res) {
 function count(req, res) {
     const queryObject = {};
     const whereObject = {};
-    // const countObject = {};
 
     if (req.query.option === 'unread') {
-        whereObject.owner = req.query.owner;
+        whereObject.owner = req.user.username;
         whereObject.readAt = null;
         queryObject.where = whereObject;
         queryObject.attributes = ['id'];
     } else if (req.query.option === 'all') {
-        whereObject.owner = req.query.owner;
+        whereObject.owner = req.user.username;
         queryObject.where = whereObject;
         queryObject.attributes = ['id'];
-    }// else if(req.query.option == "both"){
-    // }
+    }
 
     Message.findAndCountAll(queryObject)
         .then(result =>
