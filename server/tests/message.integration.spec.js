@@ -357,67 +357,56 @@ describe('Message API:', function () {
 
     });
     
-    //describe('GET /message/count', function () {
+    describe('GET /message/count', function () {
 
-    //let option;
+        let option1 = 'all';
+        let option2 = 'unread';
 
-    //     before(done => {
-    //         Message.destroy({
-    //             where: {},
-    //             truncate: true
-    //         }).then(() => {
-    //             Message.create(testMessageObject)
-    //                 .then(message => {
-    //                     userId = message.from;
-    //                     done();
-    //                 });
-    //         });
-    //     });
-    // before(() => request(app)
-    //         .post(`${baseURL}/message/send`)
-    //         .set('Authorization', `Bearer ${auth}`)
-    //         .send(testMessageObject)
-    //         .expect(httpStatus.OK)
-    //         .then((message) => {
-    //             messageId = message.body.id;
-    //             return;
-    //         })
-    //     );
+        before(done => {
+                Message.destroy({
+                    where: {},
+                truncate: true
+                }).then(message => {
+                    Message.bulkCreate(testMessageArray);
+                    done();
+                });
+        });
+    
+        after(done => {
+                Message.destroy({
+                    where: {},
+                    truncate: true
+                }).then(() => done());
+        });
 
-    //     it('should return OK', done => {
-    //         request(app)
-    //             .get(baseURL + '/message/count' + userId)
-    //             .expect(httpStatus.OK)
-    //             .then(res => {
-    //                 expect(res.text).to.equal('OK');
-    //                 done();
-    //             })
-    //             .catch(done);
-    //     });
+        it('should return OK', () => request(app)
+                .get(baseURL + '/message/count')
+                .set('Authorization', `Bearer ${auth}`)
+                .expect(httpStatus.OK)
+        );
 
-    //     it('should return a count for total Messages', done => {
-    //         request(app)
-    //             .get(baseURL + '/message/count' + userId)
-    //             .expect(httpStatus.OK)
-    //             .then(res => {
-    //                 expect(res.body.total).to.equal(1);
-    //                 done();
-    //             })
-    //             .catch(done);
-    //     });
+        it('should return a count for total Messages', () => request(app)
+            .get(baseURL + '/message/count?option' + option1)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.OK)
+            .then(res => {
+                expect(res.body.count).to.equal(16);
+                expect(res.body.rows).to.be.an('array');
+                return;
+            })
+        );
 
-    //     it('should return a count for unread Messages', done => {
-    //         request(app)
-    //             .get(baseURL + '/message/count' + userId)
-    //             .expect(httpStatus.OK)
-    //             .then(res => {
-    //                 expect(res.body.unread).to.equal(1);
-    //                 done();
-    //             })
-    //             .catch(done);
-    //     });
+        it('should return a count for unread Messages', () => request(app)
+            .get(baseURL + '/message/count?option' + option1)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.OK)
+            .then(res => {
+                expect(res.body.count).to.equal(16);
+                return;
+            })
+        );
 
-    // });
+    });
     
     describe('GET /message/get/:messageId', function () {
 
