@@ -48,6 +48,7 @@ function checkFromUser(req, res, next) {
 /**
  * Get message
  * @returns {Message}
+ * when message ID specified in the url
  */
 function get(req, res) {
     if (req.message.readAt == null) {
@@ -175,16 +176,16 @@ function list(req, res) {
         const whereObject = {};
         whereObject.from = req.query.from;
         queryObject.where = { ...queryObject.where, ...whereObject };
-    }
+    }      
 
-    if (req.query.limit) {
-        queryObject.limit = req.query.limit;
+    if (req.query.limit) {        
+        queryObject.limit = req.query.limit;      
+    }     
+      
+    if (req.query.summary) {      
+        queryObject.attributes = ['subject', 'from', 'createdAt'];        
     }
-
-    if (req.query.summary) {
-        queryObject.attributes = ['subject', 'from', 'createdAt'];
-    }
-
+    
     if (req.query.archived && req.query.archived === 'true') {
         queryObject.where.isArchived = true;
         queryObject.where.isDeleted = false;
@@ -200,7 +201,33 @@ function list(req, res) {
     }
 }
 
-function count() {}
+
+/**
+ * Return count and message IDs of all messages belonging to owner.
+ * Return count and message IDs of unread messages belonging to owner.
+ * "Owner" will not exist as part of url once this integrates with auth service.
+ */
+function count(req, res) {
+    const queryObject = {};
+    const whereObject = {};
+    // const countObject = {};
+
+    if (req.query.option === 'unread') {
+        whereObject.owner = req.query.owner;
+        whereObject.readAt = null;
+        queryObject.where = whereObject;
+        queryObject.attributes = ['id'];
+    } else if (req.query.option === 'all') {
+        whereObject.owner = req.query.owner;
+        queryObject.where = whereObject;
+        queryObject.attributes = ['id'];
+    }// else if(req.query.option == "both"){
+    // }
+
+    Message.findAndCountAll(queryObject)
+        .then(result =>
+            res.send(result));
+}
 
 /**
  * Soft delete
