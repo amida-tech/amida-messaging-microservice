@@ -1,3 +1,4 @@
+import Sequelize, { Op } from 'sequelize';
 import httpStatus from 'http-status';
 import db from '../../config/sequelize';
 import APIError from '../helpers/APIError';
@@ -185,21 +186,23 @@ function list(req, res) {
 function count(req, res) {
     const queryObject = {};
     const whereObject = {};
-
     if (req.query.option === 'unread') {
         whereObject.owner = req.user.username;
         whereObject.readAt = null;
+        whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
         queryObject.where = whereObject;
-        queryObject.attributes = ['id'];
+        queryObject.attributes = ['id', 'owner', 'readAt', 'to', 'from', 'originalMessageId'];
     } else if (req.query.option === 'all') {
         whereObject.owner = req.user.username;
+        whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
         queryObject.where = whereObject;
-        queryObject.attributes = ['id'];
+        queryObject.attributes = ['id', 'owner', 'readAt', 'to', 'from', 'originalMessageId'];
     }
 
     Message.findAndCountAll(queryObject)
-        .then(result =>
-            res.send(result));
+        .then((result) => {
+            res.send(result);
+        });
 }
 
 /**
