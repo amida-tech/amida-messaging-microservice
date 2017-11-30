@@ -190,13 +190,11 @@ function count(req, res) {
         whereObject.owner = req.user.username;
         whereObject.readAt = null;
         whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
-        queryObject.where = whereObject;
-        queryObject.attributes = ['id', 'owner', 'readAt', 'to', 'from', 'originalMessageId'];
+        queryObject.where = { ...queryObject.where, ...whereObject };
     } else if (req.query.option === 'all') {
         whereObject.owner = req.user.username;
         whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
-        queryObject.where = whereObject;
-        queryObject.attributes = ['id', 'owner', 'readAt', 'to', 'from', 'originalMessageId'];
+        queryObject.where = { ...queryObject.where, ...whereObject };
     }
 
     Message.findAndCountAll(queryObject)

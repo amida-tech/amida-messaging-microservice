@@ -140,7 +140,7 @@ describe('Message API:', function () {
                 .send(testMessageObject0)
                 .expect(httpStatus.OK)
                 .then(res => {
-                    Message.findOne({where: {owner: testMessageObject0.to[0]}})
+                    Message.findOne({where: {owner: testMessageObject0.to[1]}})
                             .then(message => {
                                 expect(message.readAt).to.be.null;   
                             });
