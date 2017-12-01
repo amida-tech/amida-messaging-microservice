@@ -190,18 +190,17 @@ function count(req, res) {
         whereObject.owner = req.user.username;
         whereObject.readAt = null;
         whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
-        queryObject.where = { ...queryObject.where, ...whereObject };
+        queryObject.where = { ...whereObject };
     } else if (req.query.option === 'all') {
         whereObject.owner = req.user.username;
         whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
         queryObject.where = whereObject;
-        queryObject.where = { ...queryObject.where, ...whereObject };
+        queryObject.where = { ...whereObject };
     }
 
-    Message.count(queryObject)
-        .then((result) => {
-            res.json(result);
-        });
+    Message
+        .count(queryObject)
+        .then((result) => res.json(result));
 }
 
 /**

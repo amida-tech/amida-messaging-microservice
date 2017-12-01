@@ -379,26 +379,26 @@ describe('Message API:', function () {
         let option1 = 'all';
         let option2 = 'unread';
 
-        // before is called twice to make sure a user has alteast 3 messages sent to him
-        before(() => request(app)
-            .post(`${baseURL}/message/send`)
-            .set('Authorization', `Bearer ${auth}`)
-            .send(testMessageObject0)
-            .expect(httpStatus.OK)
-        );
-        before(() => request(app)
-            .post(`${baseURL}/message/send`)
-            .set('Authorization', `Bearer ${auth}`)
-            .send(testMessageObject1)
-            .expect(httpStatus.OK)
-        );
+        function createTestMessage(message, done) {
+            request(app)
+                .post(`${baseURL}/message/send`)
+                .set('Authorization', `Bearer ${auth}`)
+                .send(message)
+                .expect(httpStatus.OK)
+                .then(() => done());
+        }
 
-        after(done => {
-                Message.destroy({
-                    where: {},
-                    truncate: true
-                }).then(() => done());
-        });
+        // before is called twice to make sure a user has at least 3 messages sent to him
+        before((done) => createTestMessage(testMessageObject0, done));
+
+        before((done) => createTestMessage(testMessageObject1, done));
+        
+        after(() => Message
+            .destroy({
+                where: {},
+                truncate: true
+            })
+        );
 
         it('should return OK', () => request(app)
                 .get(baseURL + '/message/count')
