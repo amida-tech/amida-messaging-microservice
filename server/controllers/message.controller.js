@@ -194,12 +194,13 @@ function count(req, res) {
     } else if (req.query.option === 'all') {
         whereObject.owner = req.user.username;
         whereObject.originalMessageId = { [Op.ne]: Sequelize.col('id') };
+        queryObject.where = whereObject;
         queryObject.where = { ...queryObject.where, ...whereObject };
     }
 
-    Message.findAndCountAll(queryObject)
+    Message.count(queryObject)
         .then((result) => {
-            res.send(result);
+            res.json(result);
         });
 }
 

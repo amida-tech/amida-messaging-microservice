@@ -411,8 +411,7 @@ describe('Message API:', function () {
             .set('Authorization', `Bearer ${auth}`)
             .expect(httpStatus.OK)
             .then(res => {
-                expect(res.body.count).to.equal(2);
-                expect(res.body.rows).to.be.an('array');
+                expect(res.body).to.equal(2);
                 return;
             })
         );
@@ -422,8 +421,7 @@ describe('Message API:', function () {
             .set('Authorization', `Bearer ${auth}`)
             .expect(httpStatus.OK)
             .then(res => {
-                expect(res.body.count).to.equal(2);
-                expect(res.body.rows).to.be.an('array');
+                expect(res.body).to.equal(2);
                 return;
             })
         );
