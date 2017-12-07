@@ -86,6 +86,11 @@ module.exports = (sequelize, DataTypes) => {
                 };
             }
         },
+        indexes: [
+          {
+            fields: ['owner', 'isDeleted', 'isArchived']
+          }
+        ]
     });
 
     // Class methods
