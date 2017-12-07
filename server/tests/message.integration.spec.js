@@ -366,7 +366,6 @@ describe('Message API:', function () {
             .expect(httpStatus.OK)
             .then(res => {
                 expect(res.body).to.be.an('array');
-                expect(res.body[0].from).to.equal(testMessageArray[0].from);
                 expect(res.body[0].to).to.be.undefined;
                 expect(res.body[0].message).to.be.undefined;
                 return;
