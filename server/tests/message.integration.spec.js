@@ -610,7 +610,7 @@ describe('Message API:', () => {
                     const id = res.body.id;
                     return Message
                         .findById(id)
-                        .then(message => expect(message).to.be.a('null'));
+                        .then(message => console.log(message) || expect(message).to.be.a('null'));
                 })
         );
     });
