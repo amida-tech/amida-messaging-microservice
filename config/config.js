@@ -7,28 +7,42 @@ const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string()
         .allow(['development', 'production', 'test', 'provision'])
         .default('development'),
-    PORT: Joi.number()
+    MESSAGING_SERVICE_PORT: Joi.number()
         .default(4001),
     JWT_SECRET: Joi.string().required()
         .description('JWT Secret required to sign'),
-    JWT_MODE: Joi.string().allow(['rsa', 'hmac']).default('hmac')
+    MESSAGING_SERVICE_JWT_MODE: Joi.string().allow(['rsa', 'hmac']).default('hmac')
         .description('Signing algorithm for JWT'),
-    JWT_PUBLIC_KEY_PATH: Joi.string()
+    MESSAGING_SERVICE_JWT_PUBLIC_KEY_PATH: Joi.string()
         .description('Absolute or relative path to RSA public key'),
-    PG_DB: Joi.string().required()
+    MESSAGING_SERVICE_PG_DB: Joi.string().required()
         .description('Postgres database name'),
-    PG_PORT: Joi.number()
+    MESSAGING_SERVICE_PG_PORT: Joi.number()
         .default(5432),
-    PG_HOST: Joi.string()
-        .default('localhost'),
-    PG_USER: Joi.string().required()
+    MESSAGING_SERVICE_PG_HOST: Joi.string(),
+    MESSAGING_SERVICE_PG_USER: Joi.string().required()
         .description('Postgres username'),
-    PG_PASSWD: Joi.string().allow('')
+    MESSAGING_SERVICE_PG_PASSWORD: Joi.string().allow('')
         .description('Postgres password'),
-    TEST_TOKEN: Joi.string().allow('')
+    MESSAGING_SERVICE_PG_SSL_ENABLED: Joi.bool()
+        .default(false)
+        .description('Enable SSL connection to PostgreSQL'),
+    MESSAGING_SERVICE_PG_CA_CERT: Joi.string()
+        .description('SSL certificate CA. This string must be the certificate itself, not a filename.'),
+    MESSAGING_SERVICE_AUTOMATED_TEST_JWT: Joi.string().allow('')
         .description('Test auth token'),
-    TEST_TOKEN_RSA: Joi.string().allow('')
+    MESSAGING_SERVICE_TEST_TOKEN_RSA: Joi.string().allow('')
         .description('Test auth token generated with RSA'),
+    AUTH_MICROSERVICE_URL: Joi.string().allow('')
+        .description('Auth microservice endpoint'),
+    NOTIFICATION_MICROSERVICE_URL: Joi.string().allow('')
+        .description('Notification Microservice endpoint'),
+    PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME: Joi.string().allow('')
+        .description('Microservice Access Key'),
+    PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD: Joi.string().allow('')
+        .description('Microservice Password'),
+    PUSH_NOTIFICATIONS_ENABLED: Joi.bool()
+        .default(false),
 }).unknown()
     .required();
 
@@ -39,18 +53,25 @@ if (error) {
 
 const config = {
     env: envVars.NODE_ENV,
-    port: envVars.PORT,
+    port: envVars.MESSAGING_SERVICE_PORT,
     jwtSecret: envVars.JWT_SECRET,
-    jwtMode: envVars.JWT_MODE,
-    jwtPublicKeyPath: envVars.JWT_PUBLIC_KEY_PATH,
-    testToken: envVars.TEST_TOKEN,
-    testTokenRSA: envVars.TEST_TOKEN_RSA,
+    jwtMode: envVars.MESSAGING_SERVICE_JWT_MODE,
+    jwtPublicKeyPath: envVars.MESSAGING_SERVICE_JWT_PUBLIC_KEY_PATH,
+    testTokenRSA: envVars.MESSAGING_SERVICE_TEST_TOKEN_RSA,
+    testToken: envVars.MESSAGING_SERVICE_AUTOMATED_TEST_JWT,
+    authMicroService: envVars.AUTH_MICROSERVICE_URL,
+    notificationMicroservice: envVars.NOTIFICATION_MICROSERVICE_URL,
+    microserviceAccessKey: envVars.PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME,
+    microservicePassword: envVars.PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD,
+    pushNotificationsEnabled: envVars.PUSH_NOTIFICATIONS_ENABLED,
     postgres: {
-        db: envVars.PG_DB,
-        port: envVars.PG_PORT,
-        host: envVars.PG_HOST,
-        user: envVars.PG_USER,
-        passwd: envVars.PG_PASSWD,
+        db: envVars.MESSAGING_SERVICE_PG_DB,
+        port: envVars.MESSAGING_SERVICE_PG_PORT,
+        host: envVars.MESSAGING_SERVICE_PG_HOST,
+        user: envVars.MESSAGING_SERVICE_PG_USER,
+        passwd: envVars.MESSAGING_SERVICE_PG_PASSWORD,
+        sslEnabled: envVars.MESSAGING_SERVICE_PG_SSL_ENABLED,
+        sslCaCert: envVars.MESSAGING_SERVICE_PG_CA_CERT,
     },
 };
 
