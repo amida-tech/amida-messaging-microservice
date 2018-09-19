@@ -18,12 +18,12 @@ const sequelizeOptions = {
     host: config.postgres.host,
     logging: dbLogging,
 };
-if (config.postgres.ssl) {
-    sequelizeOptions.ssl = config.postgres.ssl;
-    if (config.postgres.ssl_ca_cert) {
+if (config.postgres.sslEnabled) {
+    sequelizeOptions.ssl = config.postgres.sslEnabled;
+    if (config.postgres.sslCaCert) {
         sequelizeOptions.dialectOptions = {
             ssl: {
-                ca: config.postgres.ssl_ca_cert,
+                ca: config.postgres.sslCaCert,
             },
         };
     }
@@ -44,13 +44,13 @@ const UserThread = sequelize.import('../server/models/userThread.model');
 
 // Threads
 Thread.hasMany(Message);
-Thread.hasOne(Message, {as: 'LastMessage'});
-Thread.belongsToMany(User, {through: 'UserThread'});
+Thread.hasOne(Message, { as: 'LastMessage' });
+Thread.belongsToMany(User, { through: 'UserThread' });
 
 // Messages
-Message.belongsTo(Thread)
-Message.belongsTo(User, {as: 'Sender'})
-Message.belongsToMany(User, {through: 'UserMessage'});
+Message.belongsTo(Thread);
+Message.belongsTo(User, { as: 'Sender' });
+Message.belongsToMany(User, { through: 'UserMessage' });
 
 // Users
 User.belongsToMany(Thread, {through: 'UserThread'});
