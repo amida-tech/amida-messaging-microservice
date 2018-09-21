@@ -1,5 +1,4 @@
 import express from 'express';
-import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
@@ -17,10 +16,6 @@ import APIError from '../server/helpers/APIError';
 import passportConfig from './passport';
 
 const app = express();
-
-if (config.env === 'development') {
-    app.use(logger('dev'));
-}
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -40,8 +35,9 @@ app.use(cors());
 const swStats = require('swagger-stats');
 app.use(swStats.getMiddleware({}));
 
+//TODO JCB: add express winston to production 
 // enable detailed API logging in dev env
-if (config.env === 'development') {
+if (config.env === 'development' || config.env === 'production') {
     expressWinston.requestWhitelist.push('body');
     expressWinston.responseWhitelist.push('body');
     app.use(expressWinston.logger({
