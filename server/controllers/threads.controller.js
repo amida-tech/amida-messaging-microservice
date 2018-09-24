@@ -12,7 +12,7 @@ const UserThread = db.UserThread;
 const sequelize = db.sequelize;
 const Op = Sequelize.Op;
 
-function notifyUsers(users, sender) {
+function notifyUsers(users, sender, message) { // eslint-disable-line no-unused-vars
     const pushNotificationArray = [];
     users.forEach((user) => {
         if (user.username !== sender.username) {
