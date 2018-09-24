@@ -1,8 +1,9 @@
 import Joi from 'joi';
-// require and configure dotenv, will load vars in .env in PROCESS.ENV
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
+
+// configure dotenv, will load vars in .env in PROCESS.ENV
 if (process.env.NODE_ENV === 'test') {
-    console.log('using env.test');
+    console.log('using env.test'); // eslint-disable-line no-console
     dotenv.config({ path: '.env.test' });
 } else {
     dotenv.config();

@@ -8,10 +8,10 @@ pg.connect(conStringPri, (err, client, done) => { // eslint-disable-line no-unus
     client.query(`CREATE DATABASE ${config.postgres.db}`, (err1) => { // eslint-disable-line no-unused-vars
         // If in test mode and a database exists don't let it get created
         if (err1) {
-            console.log(`Database Creation Failed. Please check to see if the database "${config.postgres.db}" already exists if so please delete it`);
+            console.log(`Database Creation Failed. Please check to see if the database "${config.postgres.db}" already exists if so please delete it`); // eslint-disable-line no-console
             process.exit(1);
         } else {
-            console.log('Database Creation Succeded');
+            console.log('Database Creation Succeded'); // eslint-disable-line no-console
             process.exit(0);
         }
     });
