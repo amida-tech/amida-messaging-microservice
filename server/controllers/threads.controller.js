@@ -155,7 +155,7 @@ function reply(req, res, next) {
         const thread = threads[0];
         if (!thread) {
             const err = new APIError('Thread does not exist', 'THREAD_NOT_EXIST', httpStatus.NOT_FOUND, true);
-            return next(err);
+            throw err;
         }
         const { username } = req.user;
         return User.findOne({ where: { username } }).then((currentUser) => {
@@ -218,7 +218,7 @@ function show(req, res, next) {
         const thread = threads[0];
         if (!thread) {
             const err = new APIError('Thread does not exist', 'THREAD_NOT_EXIST', httpStatus.NOT_FOUND, true);
-            return next(err);
+            throw err;
         }
         const { username } = req.user;
         User.findOne({ where: { username } }).then((currentUser) => {
@@ -275,7 +275,7 @@ function index(req, res, next) {
         ).then((logData) => {
             if (!logData) {
                 const err = new APIError('There are no threads for the current user', httpStatus.NOT_FOUND, true);
-                return next(err);
+                throw err;
             }
             return res.send(logData);
         })
@@ -286,7 +286,7 @@ function index(req, res, next) {
         ).then((logData) => {
             if (!logData) {
                 const err = new APIError('There are no threads for the current user', httpStatus.NOT_FOUND, true);
-                return next(err);
+                throw err;
             }
             return res.send(logData);
         })
@@ -303,9 +303,15 @@ function getParticipants(req, res, next) {
         const thread = threads[0];
         if (!thread) {
             const err = new APIError('Thread does not exist', 'THREAD_NOT_EXIST', httpStatus.NOT_FOUND, true);
-            return next(err);
+            throw err;
         }
-        return thread.getUsers();
+        return thread.getUsers({
+            where: {
+                username: {
+                    [Op.ne]: req.user.username,
+                },
+            },
+        });
     })
     .then(users => res.send(users))
     .catch(e => next(e));

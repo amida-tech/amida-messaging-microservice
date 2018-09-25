@@ -162,9 +162,99 @@ describe('Threads API:', () => {
             })
         );
     });
+    describe('GET /threads/thread/participants/:threadId', () => {
+        let myThreadId;
+        let otherThreadId;
+        let otherThreadThatIncludesMeId;
+        const nonExistentThreadId = -1;
+        before(() => request(app)
+            .post(`${baseURL}/threads`)
+            .set('Authorization', `Bearer ${auth}`)
+            .send({
+                participants: ['user0', 'user1'],
+                subject: 'test subject',
+                message: 'test message',
+                topic: 'test topic',
+            })
+            .expect(httpStatus.CREATED)
+            .then((createMyThreadResponse) => {
+                myThreadId = createMyThreadResponse.body.message.ThreadId;
+                return request(app)
+                .post(`${baseURL}/threads`)
+                .set('Authorization', `Bearer ${auth2}`)
+                .send({
+                    participants: ['user2', 'user1'],
+                    subject: 'test subject',
+                    message: 'test message',
+                    topic: 'test topic',
+                })
+                .expect(httpStatus.CREATED);
+            })
+            .then((createOtherThreadResponse) => {
+                otherThreadId = createOtherThreadResponse.body.message.ThreadId;
+                return request(app)
+                .post(`${baseURL}/threads`)
+                .set('Authorization', `Bearer ${auth2}`)
+                .send({
+                    participants: ['user0', 'user2'],
+                    subject: 'test subject',
+                    message: 'test message',
+                    topic: 'test topic',
+                })
+                .expect(httpStatus.CREATED);
+            })
+            .then((createOtherThreadThatIncludesMeResponse) => {
+                otherThreadThatIncludesMeId =
+                    createOtherThreadThatIncludesMeResponse.body.message.ThreadId;
+            })
+        );
+        it('fails on a request for a nonexistent thread', () =>
+            request(app)
+            .get(`${baseURL}/threads/thread/participants/${nonExistentThreadId}`)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.status).to.equal('ERROR');
+                expect(res.body.code).to.equal('THREAD_NOT_EXIST');
+            })
+        );
+        it('fails on a request for a thread we aren\'t included on', () =>
+            request(app)
+            .get(`${baseURL}/threads/thread/participants/${otherThreadId}`)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.status).to.equal('ERROR');
+                expect(res.body.code).to.equal('THREAD_NOT_EXIST');
+            })
+        );
+        it('succeeds on request for a thread I started', () =>
+            request(app)
+            .get(`${baseURL}/threads/thread/participants/${myThreadId}`)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.OK)
+            .then((res) => {
+                expect(res.body).to.be.an('array');
+                const resUsernames = res.body.map(u => u.username);
+                expect(resUsernames).to.deep.equal(['user1']);
+            })
+        );
+        it('succeeds on request for a thread I didn\'t start but am included on', () =>
+            request(app)
+            .get(`${baseURL}/threads/thread/participants/${otherThreadThatIncludesMeId}`)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.OK)
+            .then((res) => {
+                expect(res.body).to.be.an('array');
+                const resUsernames = res.body.map(u => u.username);
+                expect(resUsernames).to.deep.equal(['user2']);
+            })
+        );
+    });
     describe('GET /threads/thread/:threadId', () => {
         let threadId;
         let otherThreadId;
+        let replyOneDate;
 
         const originalMessage = {
             participants: ['user0', 'user1'],
@@ -196,6 +286,7 @@ describe('Threads API:', () => {
             })
             .then((replyOneResponse) => {
                 replyOne.id = replyOneResponse.body.message.id;
+                replyOneDate = replyOneResponse.body.message.updatedAt;
                 return request(app)
                 .post(`${baseURL}/threads/thread/${threadId}/reply`)
                 .set('Authorization', `Bearer ${auth}`)
@@ -237,6 +328,16 @@ describe('Threads API:', () => {
                 expect(res.body).to.be.an('array');
                 expect(res.body.map(body => body.id)).to.deep.equal(
                     [originalMessage.id, replyOne.id]);
+            }));
+
+        it('should only return messages after start_date if supplied', () => request(app)
+            .get(`${baseURL}/threads/thread/${threadId}?start_date=${replyOneDate}`)
+            .set('Authorization', `Bearer ${auth}`)
+            .expect(httpStatus.OK)
+            .then((res) => {
+                expect(res.body).to.be.an('array');
+                expect(res.body.map(body => body.id)).to.deep.equal(
+                    [replyOne.id]);
             }));
 
         it('should return an array with bodies matching the specified messages', () =>
