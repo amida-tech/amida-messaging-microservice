@@ -7,12 +7,14 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.use(passport.authenticate('jwt', { session: false }));
 
+// Create a thread
 router.route('/')
     .post(threadsCtrl.create);
 
 router.route('/')
     .get(threadsCtrl.index);
 
+// Reply to thread
 router.route('/thread/:threadId/reply')
     .post(threadsCtrl.reply);
 

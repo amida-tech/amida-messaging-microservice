@@ -17,6 +17,8 @@ const envVarsSchema = Joi.object({
         .default(4001),
     JWT_SECRET: Joi.string().required()
         .description('JWT Secret required to sign'),
+    ACCESS_CONTROL_ALLOW_ORIGIN: Joi.string().required()
+        .description('set to "null" to enable mobile apps.'),
     MESSAGING_SERVICE_PG_DB: Joi.string().required()
         .description('Postgres database name'),
     MESSAGING_SERVICE_PG_PORT: Joi.number()
@@ -55,6 +57,7 @@ const config = {
     env: envVars.NODE_ENV,
     port: envVars.MESSAGING_SERVICE_PORT,
     jwtSecret: envVars.JWT_SECRET,
+    accessControlAllowOrigin: envVars.ACCESS_CONTROL_ALLOW_ORIGIN,
     testToken: envVars.MESSAGING_SERVICE_AUTOMATED_TEST_JWT,
     authMicroService: envVars.AUTH_MICROSERVICE_URL,
     notificationMicroservice: envVars.NOTIFICATION_MICROSERVICE_URL,
