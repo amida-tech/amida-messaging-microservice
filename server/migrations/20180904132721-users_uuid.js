@@ -8,14 +8,27 @@ const request = require('request');
 const User = db.User;
 
 const makeRequest = (data, callback) => {
+    console.log(data);
     request.post(data, callback);
+
 };
 const getRequest = (data, callback) => {
+    console.log(data);
     request.get(data, callback);
+
 };
 const deleteRequest = (data, callback) => {
     request.delete(data, callback);
 };
+const adminUser = {
+    email: 'auth_admin@amida.com',
+    username: 'auth_admin@amida.com',
+    password: 'Testtest1!',
+    scopes: ['admin'],
+};
+let adminToken = null;
+let adminId = null;
+let usersUpdated = 0;
 
 module.exports = {
     up(queryInterface, Sequelize) {
@@ -30,15 +43,8 @@ module.exports = {
                 after: 'id',
                 // primaryKey: true,
             }).then(() => {
-                let adminToken = null;
-                let adminId = null;
-                let usersUpdated = 0;
-                const adminUser = {
-                    email: 'auth_admin@amida.com',
-                    username: 'auth_admin@amida.com',
-                    password: 'Testtest1!',
-                    scopes: ['admin'],
-                };
+
+
 
             // Create new user on auth service if there are users without a uuid
                 makeRequest({
@@ -51,8 +57,10 @@ module.exports = {
                         console.log(errors.USER_CREATION_GENERIC_ERROR);
                         console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
                     }
-                    console.log(httpResponse.body);
+
                     adminId = JSON.parse(httpResponse.body).id;
+                })
+              }).then(() => {
 
                 // Authenticate new admin user on auth service
                     makeRequest({
@@ -73,6 +81,8 @@ module.exports = {
                         }
                         adminToken = httpResponse.body.token;
 
+                        console.log(httpResponse)
+              // }).then(() => {
                         getRequest({
                             url: `${config.authMicroService}/user`,
                             headers: {
@@ -132,7 +142,8 @@ module.exports = {
                                     }
                                     console.log(`\nMigrated ${usersUpdated} new uuid(s) successfully!\n`);
                                 });
-                            });
+                                // res.send();
+
                         });
                     });
                 });
