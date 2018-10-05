@@ -9,7 +9,6 @@ describe('Threads API:', () => {
     describe('POST /threads/', () => {
         const createThreadBody = {
             participants: ['user0', 'user1'],
-            subject: 'test subject',
             topic: 'test topic',
             message: 'test message',
         };
@@ -58,7 +57,6 @@ describe('Threads API:', () => {
                 expect(res.body.message.owner).to.equal('user0');
                 expect(res.body.message.to).to.deep.equal(['user1']);
                 expect(res.body.message.message).to.equal(createThreadBody.message);
-                expect(res.body.message.subject).to.equal(createThreadBody.subject);
             })
         );
     });
@@ -75,7 +73,6 @@ describe('Threads API:', () => {
             .set('Authorization', `Bearer ${auth}`)
             .send({
                 participants: ['user0', 'user1'],
-                subject: 'test subject',
                 message: 'test message',
                 topic: 'test topic',
             })
@@ -87,7 +84,6 @@ describe('Threads API:', () => {
                 .set('Authorization', `Bearer ${auth2}`)
                 .send({
                     participants: ['user2', 'user1'],
-                    subject: 'test subject',
                     message: 'test message',
                     topic: 'test topic',
                 })
@@ -100,7 +96,6 @@ describe('Threads API:', () => {
                 .set('Authorization', `Bearer ${auth2}`)
                 .send({
                     participants: ['user0', 'user2'],
-                    subject: 'test subject',
                     message: 'test message',
                     topic: 'test topic',
                 })
@@ -172,7 +167,6 @@ describe('Threads API:', () => {
             .set('Authorization', `Bearer ${auth}`)
             .send({
                 participants: ['user0', 'user1'],
-                subject: 'test subject',
                 message: 'test message',
                 topic: 'test topic',
             })
@@ -184,7 +178,6 @@ describe('Threads API:', () => {
                 .set('Authorization', `Bearer ${auth2}`)
                 .send({
                     participants: ['user2', 'user1'],
-                    subject: 'test subject',
                     message: 'test message',
                     topic: 'test topic',
                 })
@@ -197,7 +190,6 @@ describe('Threads API:', () => {
                 .set('Authorization', `Bearer ${auth2}`)
                 .send({
                     participants: ['user0', 'user2'],
-                    subject: 'test subject',
                     message: 'test message',
                     topic: 'test topic',
                 })
@@ -258,7 +250,6 @@ describe('Threads API:', () => {
 
         const originalMessage = {
             participants: ['user0', 'user1'],
-            subject: 'test subject',
             message: 'test message',
             topic: 'test topic',
         };
@@ -304,7 +295,6 @@ describe('Threads API:', () => {
                 .set('Authorization', `Bearer ${auth2}`)
                 .send({
                     participants: ['user1', 'user2'],
-                    subject: 'test subject',
                     message: 'test message',
                     topic: 'test topic',
                 })
