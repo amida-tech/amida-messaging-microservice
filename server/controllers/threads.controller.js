@@ -91,7 +91,7 @@ function create(req, res, next) {
             from: username,
             to: participants.filter(p => p !== username),
             owner: username,
-            subject: req.body.subject,
+            subject: '',
             message: req.body.message,
             SenderId: sender.id,
             ThreadId: thread.id,
