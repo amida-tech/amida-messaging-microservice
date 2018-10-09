@@ -93,14 +93,14 @@ module.exports = {
                                  user.username = user.username.toLowerCase();
                           // console.log(user.username)
                                  if (!(user.username in userArray)) {
-                                    console.log('User with email ', user.username, ' is missing from auth service');
-                                    const newUUID = uuidv4();
-                                    User.update({ uuid: newUUID }, { where: { id: user.id } });
-                                    usersUpdated++;
-                                } else {
-                                    User.update({ uuid: userArray[user.username].uuid }, { where: { id: user.id } });
-                                    usersUpdated++;
-                                }
+                                     console.log('User with email ', user.username, ' is missing from auth service');
+                                     const newUUID = uuidv4();
+                                     User.update({ uuid: newUUID }, { where: { id: user.id } });
+                                     usersUpdated++;
+                                 } else {
+                                     User.update({ uuid: userArray[user.username].uuid }, { where: { id: user.id } });
+                                     usersUpdated++;
+                                 }
                              });
                          } else {
                              console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
