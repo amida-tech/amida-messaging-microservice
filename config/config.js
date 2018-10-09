@@ -73,7 +73,7 @@ module.exports = {
         host: envVars.MESSAGING_SERVICE_PG_HOST,
         dialect: 'postgres',
         migrationStorageTableName: 'sequelize_meta',
-        logging: true,
+        logging: false,
         // dialectOptions: {
         //   ssl: {
         //     ca: fs.readFileSync(__dirname + '/mysql-ca-master.crt')

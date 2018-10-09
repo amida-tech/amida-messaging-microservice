@@ -1,8 +1,8 @@
 import httpStatus from 'http-status';
 import Promise from 'bluebird';
+import Sequelize from 'sequelize';
 import db from '../../config/sequelize';
 import APIError from '../helpers/APIError';
-import Sequelize from 'sequelize';
 import notificationHelper from '../helpers/notificationHelper';
 
 const Message = db.Message;
@@ -12,7 +12,7 @@ const UserThread = db.UserThread;
 const sequelize = db.sequelize;
 const Op = Sequelize.Op;
 
-function notifyUsers(users, sender, message) {
+function notifyUsers(users, sender, message) { // eslint-disable-line no-unused-vars
     const pushNotificationArray = [];
     users.forEach((user) => {
         if (user.username !== sender.username) {
@@ -226,7 +226,6 @@ function show(req, res, next) {
 function index(req, res, next) {
     const { username } = req.user;
     const { logUsername } = req.query;
-
 
     if (username === logUsername) {
         sequelize.query('SELECT * FROM "Users" as A inner join "UserThreads" as UserThread on A."id" = UserThread."UserId" inner join "Threads" as E on UserThread."ThreadId" = E."id" and (E."logUserId" = A."id" OR E."logUserId" is null ) inner join "Messages" as LastMessage on E."lastMessageId" = LastMessage."id" Where A.username = :username Order By "lastMessageSent" DESC',

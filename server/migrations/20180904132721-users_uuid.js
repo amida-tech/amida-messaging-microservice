@@ -2,8 +2,9 @@ const config = require('../../config/config');
 const babel = require('babel-core/register');
 const db = require('../../config/sequelize');
 const request = require('request');
+const rp = require('request-promise');
+const uuidv4 = require('uuid/v4');
 
-// console.log(config)
 
 const User = db.User;
 
@@ -40,107 +41,84 @@ module.exports = {
                 unique: true,
                 after: 'id',
                 // primaryKey: true,
-            }).then(() => {
+            }).then(() =>
             // Create new user on auth service if there are users without a uuid
-                makeRequest({
-                    url: `${config.authMicroService}/user`,
-                    form: adminUser,
-                }, (err, httpResponse) => {
-                    if (err) {
-                        console.log(err);
-                    } else if (httpResponse.statusCode !== 200 && httpResponse.statusCode !== 201) {
-                        console.log(errors.USER_CREATION_GENERIC_ERROR);
-                        console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
-                    }
-
-                    adminId = JSON.parse(httpResponse.body).id;
-                });
-            }).then(() => {
-                // Authenticate new admin user on auth service
-                makeRequest({
-                    url: `${config.authMicroService}/auth/login`,
-                    body: {
-                        username: adminUser.username,
-                        password: adminUser.password,
-                    },
-                    json: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }, (err, httpResponse) => {
-                    if (err) {
-                        console.log(err);
-                    } else if (httpResponse.statusCode !== 200 && httpResponse.statusCode !== 201) {
-                        console.log(errors.USER_CREATION_GENERIC_ERROR);
-                    }
-                    adminToken = httpResponse.body.token;
-
-                    console.log(httpResponse);
-              // }).then(() => {
-                    getRequest({
-                        url: `${config.authMicroService}/user`,
-                        headers: {
-                            Authorization: `Bearer ${adminToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        json: true,
-                    }, (err, httpResponse) => {
-                        if (err) {
-                            console.log(err);
-                        } else if (httpResponse.statusCode !== 200 && httpResponse.statusCode !== 201) {
-                            console.log(errors.USER_CREATION_GENERIC_ERROR);
-                        }
-                        const userData = httpResponse.body;
-                        const userArray = [];
-
-                        console.log(userData);
+                 rp({
+                     method: 'POST',
+                     url: `${config.authMicroService}/user`,
+                     form: adminUser,
+                 }).then((data) => {
+                     adminId = JSON.parse(data).id;
+                     return rp(
+                         {
+                             method: 'POST',
+                             url: `${config.authMicroService}/auth/login`,
+                             body: {
+                                 username: adminUser.username,
+                                 password: adminUser.password,
+                             },
+                             json: true,
+                             headers: {
+                                 'Content-Type': 'application/json',
+                             },
+                         });
+                 }).then((data) => {
+                     adminToken = data.token;
+                     return rp({
+                         method: 'GET',
+                         url: `${config.authMicroService}/user`,
+                         headers: {
+                             Authorization: `Bearer ${adminToken}`,
+                             'Content-Type': 'application/json',
+                         },
+                         json: true,
+                     });
+                 }).then((data) => {
+                     const userArray = [];
+                     data.forEach((user) => {
+                         user.username = user.username.toLowerCase();
+                         user.email = user.email.toLowerCase();
+                         userArray[user.username] = user;
+                     });
 
 
-                        userData.forEach((user) => {
-                            user.username = user.username.toLowerCase();
-                            user.email = user.email.toLowerCase();
-                            userArray[user.username] = user;
-                        });
-
-                        User.findAll({
-                            where: {
-                                uuid: { $eq: null },
-                            },
-
-                        }).then((users) => {
-                            if (users.length > 0) {
-                                users.email = users.email.toLowerCase();
-                                if (!(users.email in userArray)) {
-                                    console.log('User with email ', users.email, ' is missing from auth service');
+                     User.findAll({
+                         where: {
+                             uuid: { $eq: null },
+                         },
+                     }).then((users) => {
+                      // console.log(users)
+                         if (users.length > 0) {
+                             users.forEach((user) => {
+                                 user.username = user.username.toLowerCase();
+                          // console.log(user.username)
+                                 if (!(user.username in userArray)) {
+                                    console.log('User with email ', user.username, ' is missing from auth service');
+                                    const newUUID = uuidv4();
+                                    User.update({ uuid: newUUID }, { where: { id: user.id } });
+                                    usersUpdated++;
                                 } else {
-                                    users.updateAttributes({ uuid: userArray[user.username].uuid });
-                                      // .update(uuid: uuid, { where: users.id });
+                                    User.update({ uuid: userArray[user.username].uuid }, { where: { id: user.id } });
                                     usersUpdated++;
                                 }
-                            } else {
-                                console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
-                            }
-
-                            deleteRequest({
-                                url: `${config.authMicroService}/user/${adminId}`,
-                                headers: {
-                                    Authorization: `Bearer ${adminToken}`,
-                                    'Content-Type': 'application/json',
-                                },
-                                json: true,
-                            }, (err, httpResponse) => {
-                                if (err) {
-                                    console.log(err);
-                                } else if (httpResponse.statusCode !== 204) {
-                                    console.log(errors.USER_CREATION_GENERIC_ERROR);
-                                }
-                                console.log(`\nMigrated ${usersUpdated} new uuid(s) successfully!\n`);
-                            });
-                                // res.send();
-                        });
-                    });
-                });
-            });
+                             });
+                         } else {
+                             console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
+                         }
+                     });
+                 }).then((res) => {
+                     console.log(adminId);
+                     console.log(adminToken);
+                     return rp({
+                         method: 'DELETE',
+                         url: `${config.authMicroService}/user/${adminId}`,
+                         headers: {
+                             Authorization: `Bearer ${adminToken}`,
+                             'Content-Type': 'application/json',
+                         },
+                         json: true,
+                     });
+                 }));
     },
     down(queryInterface) {
         return queryInterface.removeColumn('Users', 'uuid');
