@@ -35,11 +35,11 @@ app.use(cors());
 const swStats = require('swagger-stats');
 app.use(swStats.getMiddleware({}));
 
-//TODO JCB: add express winston to production 
+// TODO JCB: add express winston to production
 // enable detailed API logging in dev env
 if (config.env === 'development' || config.env === 'production') {
-    expressWinston.requestWhitelist.push('body');
-    expressWinston.responseWhitelist.push('body');
+    expressWinston.requestWhitelist = ['url', 'method', 'httpVersion', 'originalUrl', 'query'];
+    expressWinston.responseWhitelist = ['statusCode', 'responseTime'];
     app.use(expressWinston.logger({
         winstonInstance,
         meta: true, // optional: log meta data about request (defaults to true)
