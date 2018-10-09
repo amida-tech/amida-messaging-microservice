@@ -4,7 +4,6 @@ import app from './config/express';
 import db from './config/sequelize';
 import logger from './config/winston';
 
-const debug = require('debug')('amida-api-boilerplate:index');
 /* eslint-enable no-unused-vars */
 
 // make bluebird default Promise
@@ -17,8 +16,11 @@ function startServer() {
         app.listen(config.port, () => {
             logger.info({
                 service: 'messaging-service',
-                message: `server started on port ${config.port} (${config.env})`,
-            });
+                message: 'server started on port',
+                port: config.port,
+                node_env: config.env
+            }
+        );
         });
     }
 }
@@ -27,8 +29,8 @@ db.sequelize
   .sync()
   .then(startServer)
   .catch((err) => {
-      if (err) debug('An error occured %j', err);
-      else debug('Database synchronized');
+      if (err) logger.debug('An error occured', err);
+      else logger.debug('Database synchronized');
   });
 
 export default app;
