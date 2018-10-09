@@ -40,6 +40,7 @@ function create(req, res, next) {
     const { username } = req.user;
     const participants = req.body.participants;
     const logUser = req.body.logUser;
+    const tags = req.body.tags || [];
     const users = [];
     const userPromises = [];
     const date = new Date();
@@ -80,6 +81,7 @@ function create(req, res, next) {
             topic: req.body.topic,
             lastMessageSent: date,
             logUserId,
+            tags,
         })
     )
     .then((thread) => {

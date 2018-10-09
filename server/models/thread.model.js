@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
+        /* eslint-disable new-cap */
+        tags: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: false,
+        },
     });
     return Thread;
 };
