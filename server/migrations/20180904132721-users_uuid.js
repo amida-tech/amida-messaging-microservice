@@ -8,17 +8,6 @@ const uuidv4 = require('uuid/v4');
 
 const User = db.User;
 
-const makeRequest = (data, callback) => {
-    console.log(data);
-    request.post(data, callback);
-};
-const getRequest = (data, callback) => {
-    console.log(data);
-    request.get(data, callback);
-};
-const deleteRequest = (data, callback) => {
-    request.delete(data, callback);
-};
 const adminUser = {
     email: 'auth_admin@amida.com',
     username: 'auth_admin@amida.com',
@@ -49,6 +38,8 @@ module.exports = {
                      form: adminUser,
                  }).then((data) => {
                      adminId = JSON.parse(data).id;
+
+                     // Login user that was created with token
                      return rp(
                          {
                              method: 'POST',
@@ -64,6 +55,8 @@ module.exports = {
                          });
                  }).then((data) => {
                      adminToken = data.token;
+
+                     // Get all users and their uuid's from auth
                      return rp({
                          method: 'GET',
                          url: `${config.authMicroService}/user`,
@@ -74,6 +67,10 @@ module.exports = {
                          json: true,
                      });
                  }).then((data) => {
+
+                     // Update all users on auth with uuids from auth, or generate one if
+                     // auth does  not contain one
+
                      const userArray = [];
                      data.forEach((user) => {
                          user.username = user.username.toLowerCase();
@@ -98,7 +95,9 @@ module.exports = {
                                      User.update({ uuid: newUUID }, { where: { id: user.id } });
                                      usersUpdated++;
                                  } else {
-                                     User.update({ uuid: userArray[user.username].uuid }, { where: { id: user.id } });
+                                     User.update(
+                                                  { uuid: userArray[user.username].uuid },
+                                                  { where: { id: user.id } });
                                      usersUpdated++;
                                  }
                              });
@@ -107,8 +106,7 @@ module.exports = {
                          }
                      });
                  }).then((res) => {
-                     console.log(adminId);
-                     console.log(adminToken);
+                     // Delete user that was generated to run migration
                      return rp({
                          method: 'DELETE',
                          url: `${config.authMicroService}/user/${adminId}`,
