@@ -21,7 +21,7 @@ function sendPushNotifications(pushData) {
             data: { pushData },
         };
         // eslint-disable-next-line no-unused-vars
-        client.post(`${config.notificationMicroservice}/notifications/sendPushNotifications`, pushNotificationArgs, (_data, response) => {
+        client.post(`${config.notificationMicroservice}/notifications/sendPushNotifications`, pushNotificationArgs, (data2, response2) => {
         });
     });
 }
