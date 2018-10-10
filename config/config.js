@@ -65,19 +65,4 @@ module.exports = {
         sslEnabled: envVars.MESSAGING_SERVICE_PG_SSL_ENABLED,
         sslCaCert: envVars.MESSAGING_SERVICE_PG_CA_CERT,
     },
-    development: {
-        username: envVars.MESSAGING_SERVICE_PG_USER,
-        password: envVars.MESSAGING_SERVICE_PG_PASSWORD,
-        port: envVars.MESSAGING_SERVICE_PG_PORT,
-        database: envVars.MESSAGING_SERVICE_PG_DB,
-        host: envVars.MESSAGING_SERVICE_PG_HOST,
-        dialect: 'postgres',
-        migrationStorageTableName: 'sequelize_meta',
-        logging: false,
-        // dialectOptions: {
-        //   ssl: {
-        //     ca: fs.readFileSync(__dirname + '/mysql-ca-master.crt')
-        //   }
-        // }
-    },
 };
