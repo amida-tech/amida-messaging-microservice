@@ -11,8 +11,10 @@
     "yarn": ">=0.20.3"
   },
   "scripts": {
-    "start": "./node_modules/.bin/sequelize db:migrate && gulp serve",
+    "start": "gulp serve",
     "start:debug": "cross-env DEBUG=amida-messaging-microservice:* yarn start",
+    "migrate": "./node_modules/.bin/sequelize db:migrate",
+    "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo:all",
     "build": "gulp",
     "lint": "esw -c .eslintrc *.js server config . --color --fix",
     "lint:watch": "yarn lint -- --watch",
