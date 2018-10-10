@@ -277,7 +277,7 @@ describe('Threads API:', () => {
             })
             .then((replyOneResponse) => {
                 replyOne.id = replyOneResponse.body.message.id;
-                replyOneDate = replyOneResponse.body.message.updatedAt;
+                replyOneDate = replyOneResponse.body.message.createdAt;
                 return request(app)
                 .post(`${baseURL}/threads/thread/${threadId}/reply`)
                 .set('Authorization', `Bearer ${auth}`)

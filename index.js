@@ -18,7 +18,7 @@ function startServer() {
                 service: 'messaging-service',
                 message: 'server started on port',
                 port: config.port,
-                node_env: config.env
+                node_env: config.env,
             }
         );
         });

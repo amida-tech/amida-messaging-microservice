@@ -5,7 +5,7 @@ const conStringPri = `postgres://${config.postgres.user}:${config.postgres.passw
 
 pg.connect(conStringPri, (err, client, done) => { // eslint-disable-line no-unused-vars
     if (err) {
-        console.log('Database connection failed:', err);
+        console.log('Database connection failed:', err); // eslint-disable-line no-console
         process.exit(1);
     }
     // create the db and ignore any errors, for example if it already exists.
