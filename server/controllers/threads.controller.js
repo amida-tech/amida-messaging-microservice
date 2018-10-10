@@ -239,7 +239,7 @@ function show(req, res, next) {
         if (req.query.start_date) {
             const startDate = new Date(req.query.start_date);
             where.where = {
-                updatedAt: {
+                createdAt: {
                     [Op.gte]: startDate,
                 },
             };
