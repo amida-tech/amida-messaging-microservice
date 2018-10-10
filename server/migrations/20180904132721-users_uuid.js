@@ -1,7 +1,5 @@
 const config = require('../../config/config');
-const babel = require('babel-core/register');
 const db = require('../../config/sequelize');
-const request = require('request');
 const rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
@@ -67,7 +65,6 @@ module.exports = {
                          json: true,
                      });
                  }).then((data) => {
-
                      // Update all users on auth with uuids from auth, or generate one if
                      // auth does  not contain one
 
@@ -88,10 +85,9 @@ module.exports = {
                          if (users.length > 0) {
                              users.forEach((user) => {
                                  user.username = user.username.toLowerCase();
-                          // console.log(user.username)
                                  if (!(user.username in userArray)) {
-                                     console.log('User with email ', user.username, ' is missing from auth service');
                                      const newUUID = uuidv4();
+                                     console.log('User with email ', user.username, ' is missing from auth service');
                                      User.update({ uuid: newUUID }, { where: { id: user.id } });
                                      usersUpdated++;
                                  } else {
@@ -105,18 +101,17 @@ module.exports = {
                              console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
                          }
                      });
-                 }).then((res) => {
+                 }).then(res =>
                      // Delete user that was generated to run migration
-                     return rp({
-                         method: 'DELETE',
-                         url: `${config.authMicroService}/user/${adminId}`,
-                         headers: {
-                             Authorization: `Bearer ${adminToken}`,
-                             'Content-Type': 'application/json',
-                         },
-                         json: true,
-                     });
-                 }));
+                      rp({
+                          method: 'DELETE',
+                          url: `${config.authMicroService}/user/${adminId}`,
+                          headers: {
+                              Authorization: `Bearer ${adminToken}`,
+                              'Content-Type': 'application/json',
+                          },
+                          json: true,
+                      })));
     },
     down(queryInterface) {
         return queryInterface.removeColumn('Users', 'uuid');
