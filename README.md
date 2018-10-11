@@ -214,6 +214,10 @@ A description of what the variable is or does.
 
 - Valid values are `development`, `production`, and `test`.
 
+##### `LOG_LEVEL` [`info`]
+
+- Valid values are [winston](https://github.com/winstonjs/winston) logging levels (`error`, `warn`, etc.).
+
 ##### `MESSAGING_SERVICE_PORT` (Required) [`4001`]
 
 The port this server will run on.
