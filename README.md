@@ -44,6 +44,7 @@ yarn
 Set environment vars:
 ```sh
 cp .env.example .env
+cp .env .env.test
 ```
 
 In .env, specify the enviroment variables you need.
@@ -73,6 +74,7 @@ Create a JWT with the username value 'user0' and set `MESSAGING_SERVICE_AUTOMATE
 
 ```sh
 # Run tests written in ES6
+# Make sure .env.test exists
 yarn test
 
 # Run test along with code coverage
@@ -144,7 +146,7 @@ postgres:9.6
 
 Note: To make push notifications work, follow the steps in section [Enabling Push Notifications with the Notifications Microservice](#Enabling-Push-Notifications-with-the-Notifications-Microservice)
 
-4. Start the messaging-service container:
+Note: If you are testing deploying this service in conjunction with other services or to connect to a specific front-end client it is vital that the JWT_SECRET environment variables match up between the different applications.
 
 ```sh
 docker run -d -p 4001:4001 \
@@ -212,6 +214,10 @@ A description of what the variable is or does.
 
 - Valid values are `development`, `production`, and `test`.
 
+##### `LOG_LEVEL` [`info`]
+
+- Valid values are [winston](https://github.com/winstonjs/winston) logging levels (`error`, `warn`, etc.).
+
 ##### `MESSAGING_SERVICE_PORT` (Required) [`4001`]
 
 The port this server will run on.
@@ -256,8 +262,8 @@ If SSL is enabled with `MESSAGING_SERVICE_PG_SSL_ENABLED` this can be set to a c
 
 ##### `AUTH_MICROSERVICE_URL`
 
-Url of the Auth Service API.
-- `.env.production` sets this to to `https://amida-auth-microservice:4000/api`, which assumes:
+URL of the Auth Service API.
+- `.env.production` sets this to to `https://amida-auth-microservice:4000/api/v1`, which assumes:
   - `amida-auth-microservice` is the name of the docker container running the Auth Service.
   - `4000` is the port the Auth Service is running on in its container.
   - The Auth Service's docker container and this service's docker container are a part of the same docker network.
@@ -271,8 +277,8 @@ Must match value of the JWT secret being used by your `amida-auth-microservice` 
 
 ##### `NOTIFICATION_MICROSERVICE_URL`
 
-Url of Amida Notification Microservice API.
-- `.env.production` sets this to to `https://amida-notification-microservice:4000/api`, which assumes:
+URL of Amida Notification Microservice API.
+- `.env.production` sets this to to `https://amida-notification-microservice:4000/api/v1`, which assumes:
   - `amida-notification-microservice` is the name of the docker container running the Notification Service.
   - `4003` is the port the Notification Service is running on in its container.
   - The Notification Service's docker container and this service's docker container are a part of the same docker network.

@@ -1,12 +1,21 @@
-const Joi = require('joi');
-// require and configure dotenv, will load vars in .env in PROCESS.ENV
-require('dotenv').config();
+import Joi from 'joi';
+import dotenv from 'dotenv';
+
+// configure dotenv, will load vars in .env in PROCESS.ENV
+if (process.env.NODE_ENV === 'test') {
+    console.log('using env.test'); // eslint-disable-line no-console
+    dotenv.config({ path: '.env.test' });
+} else {
+    dotenv.config();
+}
 
 // define validation for all the env vars
 const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string()
         .allow(['development', 'production', 'test', 'provision'])
-        .default('development'),
+        .default('production'),
+    LOG_LEVEL: Joi.string()
+        .default('info'),
     MESSAGING_SERVICE_PORT: Joi.number()
         .default(4001),
     JWT_SECRET: Joi.string().required()
@@ -48,6 +57,7 @@ if (error) {
 
 module.exports = {
     env: envVars.NODE_ENV,
+    logLevel: envVars.LOG_LEVEL,
     port: envVars.MESSAGING_SERVICE_PORT,
     jwtSecret: envVars.JWT_SECRET,
     testToken: envVars.MESSAGING_SERVICE_AUTOMATED_TEST_JWT,
@@ -61,7 +71,7 @@ module.exports = {
         port: envVars.MESSAGING_SERVICE_PG_PORT,
         host: envVars.MESSAGING_SERVICE_PG_HOST,
         user: envVars.MESSAGING_SERVICE_PG_USER,
-        passwd: envVars.MESSAGING_SERVICE_PG_PASSWORD,
+        password: envVars.MESSAGING_SERVICE_PG_PASSWORD,
         sslEnabled: envVars.MESSAGING_SERVICE_PG_SSL_ENABLED,
         sslCaCert: envVars.MESSAGING_SERVICE_PG_CA_CERT,
     },

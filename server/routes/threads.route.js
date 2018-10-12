@@ -16,10 +16,15 @@ router.route('/')
 router.route('/thread/:threadId/reply')
     .post(threadsCtrl.reply);
 
+/**
+ * url params:
+ * - start_date: string, date in ISO 8601 format,
+ *               to only get messages created or updated after the specified date
+ */
 router.route('/thread/:threadId')
     .get(threadsCtrl.show);
 
 router.route('/thread/participants/:threadId')
-    .get(threadsCtrl.participants);
+    .get(threadsCtrl.getParticipants);
 
 export default router;
