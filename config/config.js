@@ -32,12 +32,13 @@ const envVarsSchema = Joi.object({
     MESSAGING_SERVICE_PG_SSL_ENABLED: Joi.bool()
         .default(false)
         .description('Enable SSL connection to PostgreSQL'),
-    MESSAGING_SERVICE_PG_CA_CERT: Joi.string()
+    MESSAGING_SERVICE_PG_CA_CERT: Joi.string().allow('')
         .description('SSL certificate CA. This string must be the certificate itself, not a filename.'),
     MESSAGING_SERVICE_AUTOMATED_TEST_JWT: Joi.string().allow('')
         .description('Test auth token'),
     AUTH_MICROSERVICE_URL: Joi.string().allow('')
-        .description('Auth microservice endpoint'),
+        .description('Auth microservice endpoint')
+        .default('http://localhost:4000/api/v1'),
     NOTIFICATION_MICROSERVICE_URL: Joi.string().allow('')
         .description('Notification Microservice endpoint'),
     PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME: Joi.string().allow('')
@@ -54,7 +55,7 @@ if (error) {
     throw new Error(`Config validation error: ${error.message}`);
 }
 
-const config = {
+module.exports = {
     env: envVars.NODE_ENV,
     logLevel: envVars.LOG_LEVEL,
     port: envVars.MESSAGING_SERVICE_PORT,
@@ -75,5 +76,3 @@ const config = {
         sslCaCert: envVars.MESSAGING_SERVICE_PG_CA_CERT,
     },
 };
-
-export default config;
