@@ -11,18 +11,18 @@ Promise = require('bluebird'); // eslint-disable-line no-global-assign
 
 function startServer() {
   // module.parent check is required to support mocha watch
-    if (!module.parent) {
-    // listen on port config.port
-        app.listen(config.port, () => {
-            logger.info({
-                service: 'messaging-service',
-                message: 'server started on port',
-                port: config.port,
-                node_env: config.env,
-            }
-        );
-        });
-    }
+    // if (!module.parent) {
+    // // listen on port config.port
+    //     app.listen(config.port, () => {
+    //         logger.info({
+    //             service: 'messaging-service',
+    //             message: 'server started on port',
+    //             port: config.port,
+    //             node_env: config.env,
+    //         }
+    //     );
+    //     });
+    // }
 }
 
 db.sequelize
