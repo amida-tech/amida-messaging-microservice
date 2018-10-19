@@ -6,14 +6,7 @@ const uuidv4 = require('uuid/v4');
 
 const User = db.User;
 
-const adminUser = {
-    email: 'auth_admin@amida.com',
-    username: 'auth_admin@amida.com',
-    password: 'Testtest1!',
-    scopes: ['admin'],
-};
 let adminToken = null;
-let adminId = null;
 let usersUpdated = 0;
 
 module.exports = {
@@ -28,29 +21,21 @@ module.exports = {
                 unique: true,
                 after: 'id',
                 // primaryKey: true,
-            }).then(() =>
-            // Create new user on auth service if there are users without a uuid
-                 rp({
-                     method: 'POST',
-                     url: `${config.authMicroService}/user`,
-                     form: adminUser,
-                 }).then((data) => {
-                     adminId = JSON.parse(data).id;
-
-                     // Login user that was created with token
-                     return rp(
-                         {
-                             method: 'POST',
-                             url: `${config.authMicroService}/auth/login`,
-                             body: {
-                                 username: adminUser.username,
-                                 password: adminUser.password,
-                             },
-                             json: true,
-                             headers: {
-                                 'Content-Type': 'application/json',
-                             },
-                         });
+            }).then(() => {
+                 // Login user that was created with token
+                  return rp(
+                     {
+                         method: 'POST',
+                         url: `${config.authMicroService}/auth/login`,
+                         body: {
+                             username: `${config.microserviceAccessKey}`,
+                             password: `${config.microservicePassword}`,
+                         },
+                         json: true,
+                         headers: {
+                             'Content-Type': 'application/json',
+                         },
+                     });
                  }).then((data) => {
                      adminToken = data.token;
 
@@ -97,21 +82,9 @@ module.exports = {
                                      usersUpdated++;
                                  }
                              });
-                         } else {
-                             console.log('\n\nERROR: Please migrate auth service to include the uuid column with the following command: `node_modules/.bin/sequelize db:migrate`\n\n');
                          }
                      });
-                 }).then(res =>
-                     // Delete user that was generated to run migration
-                      rp({
-                          method: 'DELETE',
-                          url: `${config.authMicroService}/user/${adminId}`,
-                          headers: {
-                              Authorization: `Bearer ${adminToken}`,
-                              'Content-Type': 'application/json',
-                          },
-                          json: true,
-                      })));
+                 })
     },
     down(queryInterface) {
         return queryInterface.removeColumn('Users', 'uuid');
