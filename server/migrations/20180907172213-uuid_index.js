@@ -8,6 +8,6 @@ module.exports = {
         return queryInterface.addIndex('Users', ['uuid']).then(() => queryInterface.addIndex('UserMessages', ['MessageId', 'UserId']));
     },
     down(queryInterface) {
-        return queryInterface.removeIndex('Users', ['uuid']).then(() => queryInterface.removeIndex('UserMessages', ['MessageId',' UserId']));
+        return queryInterface.removeIndex('Users', ['uuid']).then(() => queryInterface.removeIndex('UserMessages', ['MessageId', ' UserId']));
     },
 };
