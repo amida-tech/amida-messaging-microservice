@@ -43,6 +43,7 @@
     "express-jwt": "5.3.0",
     "express-validation": "1.0.1",
     "express-winston": "2.5.0",
+    "git-last-commit": "^0.3.0",
     "gulp": "3.9.1",
     "gulp-load-plugins": "^1.2.0",
     "helmet": "3.6.1",
@@ -64,8 +65,8 @@
     "snyk": "^1.69.4",
     "supertest": "^3.0.0",
     "supertest-as-promised": "4.0.2",
-    "uuid": "^3.3.2",
     "swagger-stats": "^0.95.6",
+    "uuid": "^3.3.2",
     "winston": "3.0.0"
   },
   "devDependencies": {

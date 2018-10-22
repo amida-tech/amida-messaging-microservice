@@ -31,6 +31,8 @@ app.use(helmet());
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
+winstonInstance.info({ message: 'Jonah Testing' });
+
 // eslint-disable-next-line import/newline-after-import
 const swStats = require('swagger-stats');
 app.use(swStats.getMiddleware({}));
