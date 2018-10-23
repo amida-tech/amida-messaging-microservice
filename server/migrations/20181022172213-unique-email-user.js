@@ -12,10 +12,6 @@ module.exports = {
         });
     },
     down(queryInterface, Sequelize) {
-        return queryInterface.changeColumn('Users', 'username', {
-            type: Sequelize.STRING,
-            allowNull: false,
-            unique: false,
-        });
+        return queryInterface.removeConstraint('Users', 'username_unique_idx');
     },
 };
