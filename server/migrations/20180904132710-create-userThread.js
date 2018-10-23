@@ -42,5 +42,8 @@ module.exports = {
             },
         });
     },
-    down: (queryInterface, Sequelize) => queryInterface.dropTable('UserThreads'),
+    down(queryInterface, Sequelize) {
+        return true;
+    },
+    // down: (queryInterface, Sequelize) => queryInterface.dropTable('UserThreads'),
 };
