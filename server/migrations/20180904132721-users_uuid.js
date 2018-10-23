@@ -56,7 +56,7 @@ module.exports = {
                            data.forEach((user) => {
                                user.username = user.username.toLowerCase();
                                user.email = user.email.toLowerCase();
-                               userArray[user.username] = user;
+                               userArray[user.email] = user;
                            });
 
 
