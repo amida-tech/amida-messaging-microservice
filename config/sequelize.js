@@ -25,6 +25,7 @@ if (config.postgres.sslEnabled) {
         sequelizeOptions.dialectOptions = {
             ssl: {
                 ca: config.postgres.sslCaCert,
+                rejectUnauthorized: true,
             },
         };
     }
@@ -36,6 +37,11 @@ const sequelize = new Sequelize(
     config.postgres.password,
     sequelizeOptions
 );
+
+if (config.postgres.sslEnabled) {
+    // eslint-disable-next-line no-use-before-define
+    ensureConnectionIsEncrypted(sequelize);
+}
 
 const Message = sequelize.import('../server/models/message.model');
 const User = sequelize.import('../server/models/user.model');
@@ -71,4 +77,24 @@ db.UserThread = UserThread;
 module.exports = _.extend({
     sequelize,
     Sequelize,
+    // eslint-disable-next-line no-use-before-define
+    ensureConnectionIsEncrypted,
 }, db);
+
+// eslint-disable-next-line no-shadow
+function ensureConnectionIsEncrypted(sequelize) {
+    sequelize.query('select 1 as "dummy string"', {
+        type: sequelize.QueryTypes.SELECT,
+    })
+    .then((result) => {
+        logger.info('Sequelize is not throwing SSL-related errors, so we assume SSL is configured correctly.');
+    })
+    .catch((err) => {
+        if (err.message === 'self signed certificate in certificate chain') {
+            logger.error(`Sequelize is throwing error "${err.message}", which it does seemingly any time the certificate is invalid. Ensure your MESSAGING_SERVICE_PG_CA_CERT is set correctly.`);
+        } else {
+            logger.error(`Error attempting to verify the sequelize connection is SSL encrypted: ${err.message}`);
+        }
+        process.exit(1);
+  });
+}
