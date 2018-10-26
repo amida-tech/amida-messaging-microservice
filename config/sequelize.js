@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import _ from 'lodash';
 import config from './config';
 import logger from './winston';
+import { ensureConnectionIsEncrypted } from './helpers';
 
 let dbLogging;
 if (config.env === 'test') {
@@ -39,7 +40,6 @@ const sequelize = new Sequelize(
 );
 
 if (config.postgres.sslEnabled) {
-    // eslint-disable-next-line no-use-before-define
     ensureConnectionIsEncrypted(sequelize);
 }
 
@@ -77,24 +77,4 @@ db.UserThread = UserThread;
 module.exports = _.extend({
     sequelize,
     Sequelize,
-    // eslint-disable-next-line no-use-before-define
-    ensureConnectionIsEncrypted,
 }, db);
-
-// eslint-disable-next-line no-shadow
-function ensureConnectionIsEncrypted(sequelize) {
-    sequelize.query('select 1 as "dummy string"', {
-        type: sequelize.QueryTypes.SELECT,
-    })
-    .then((result) => {
-        logger.info('Sequelize is not throwing SSL-related errors, so we assume SSL is configured correctly.');
-    })
-    .catch((err) => {
-        if (err.message === 'self signed certificate in certificate chain') {
-            logger.error(`Sequelize is throwing error "${err.message}", which it does seemingly any time the certificate is invalid. Ensure your MESSAGING_SERVICE_PG_CA_CERT is set correctly.`);
-        } else {
-            logger.error(`Error attempting to verify the sequelize connection is SSL encrypted: ${err.message}`);
-        }
-        process.exit(1);
-  });
-}
