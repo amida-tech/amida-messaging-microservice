@@ -15,43 +15,9 @@ const logger = createLogger({
     ],
 });
 
-const gitCommit = {};
-git.getLastCommit((err, commit) => commit).then((commit) => {
-    console.log('Jonah', gitCommit);
+git.getLastCommit((err, commit) => {
 
-    const prodFormat = printf(info => JSON.stringify({
-        service: pjson.name,
-        logger: 'my_winston_logger',
-        hostname: os.hostname(),
-        level: info.level,
-        msg: info.message,
-        meta: {
-            service: {
-                commit: '2bb08ad',
-                version: 'v1.0.0',
-            },
-
-            logger: {
-                time: info.timestamp,
-                baz: 'bok',
-            },
-
-            event: {
-                foo: 'bar',
-            },
-        },
-    }));
-
-    if (config.env === 'production') {
-        logger.format = combine(
-        timestamp(),
-        // colorize(),
-        prodFormat
-    );
-    }
-});
-
-const prodFormat = printf(info => JSON.stringify({
+  const prodFormat = printf(info => JSON.stringify({
     service: pjson.name,
     logger: 'my_winston_logger',
     hostname: os.hostname(),
@@ -59,37 +25,33 @@ const prodFormat = printf(info => JSON.stringify({
     msg: info.message,
     meta: {
         service: {
-            commit: '2bb08ad',
-            version: 'v1.0.0',
+            commit: commit.shortHash,
+            commitMessage: commit.subject,
+            version: pjson.version,
         },
-
+  
         logger: {
             time: info.timestamp,
             baz: 'bok',
         },
-
+  
         event: {
             foo: 'bar',
         },
     },
-}));
+  }));
+
+  if (config.env === 'production') {
+    logger.format = combine(
+    timestamp(),
+    // colorize(),
+    prodFormat
+    );
+  }
+
+  return commit})
 
 const developmentFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
 
-// if (config.env !== 'production') {
-//     logger.format = combine(
-//         timestamp(),
-//         colorize(),
-//         developmentFormat
-//     );
-// }
-
-// if (config.env === 'production') {
-//     logger.format = combine(
-//         timestamp(),
-//         // colorize(),
-//         prodFormat
-//     );
-// }
 
 export default logger;
