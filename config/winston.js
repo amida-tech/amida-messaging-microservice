@@ -15,43 +15,51 @@ const logger = createLogger({
     ],
 });
 
-git.getLastCommit((err, commit) => {
-
-  const prodFormat = printf(info => JSON.stringify({
-    service: pjson.name,
-    logger: 'my_winston_logger',
-    hostname: os.hostname(),
-    level: info.level,
-    msg: info.message,
-    meta: {
-        service: {
-            commit: commit.shortHash,
-            commitMessage: commit.subject,
-            version: pjson.version,
-        },
-  
-        logger: {
-            time: info.timestamp,
-            baz: 'bok',
-        },
-  
-        event: {
-            foo: 'bar',
-        },
-    },
-  }));
-
-  if (config.env === 'production') {
-    logger.format = combine(
-    timestamp(),
-    // colorize(),
-    prodFormat
-    );
-  }
-
-  return commit})
-
 const developmentFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
+
+git.getLastCommit((err, commit) => {
+    const prodFormat = printf(info => JSON.stringify({
+        service: pjson.name,
+        logger: 'my_winston_logger',
+        hostname: os.hostname(),
+        level: info.level,
+        msg: info.message,
+        meta: {
+            service: {
+                commit: commit.shortHash,
+                commitMessage: commit.subject,
+                version: pjson.version,
+            },
+
+            logger: {
+                time: info.timestamp,
+                baz: 'bok',
+            },
+
+            event: {
+                foo: 'bar',
+            },
+        },
+    }));
+
+    if (config.env === 'production') {
+        logger.format = combine(
+        timestamp(),
+        // colorize(),
+        prodFormat
+        );
+    }
+    else {
+      logger.format = combine(
+        timestamp(),
+        colorize(),
+        developmentFormat
+        );
+    }
+
+    return commit;
+});
+
 
 
 export default logger;
