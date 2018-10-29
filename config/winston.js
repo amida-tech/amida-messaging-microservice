@@ -48,9 +48,8 @@ git.getLastCommit((err, commit) => {
         // colorize(),
         prodFormat
         );
-    }
-    else {
-      logger.format = combine(
+    } else {
+        logger.format = combine(
         timestamp(),
         colorize(),
         developmentFormat
@@ -59,7 +58,6 @@ git.getLastCommit((err, commit) => {
 
     return commit;
 });
-
 
 
 module.exports = logger;
