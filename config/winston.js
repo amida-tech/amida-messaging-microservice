@@ -30,16 +30,18 @@ git.getLastCommit((err, commit) => {
                 commitMessage: commit.subject,
                 version: pjson.version,
             },
-
             logger: {
                 time: info.timestamp,
                 baz: 'bok',
             },
-
             event: {
                 foo: 'bar',
             },
         },
+        err: {
+            err: info.err,
+            stack: info.stack
+        }
     }));
 
     if (config.env === 'production') {
