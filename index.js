@@ -25,12 +25,6 @@ function startServer() {
     }
 }
 
-db.sequelize
-  .sync()
-  .then(startServer)
-  .catch((err) => {
-      if (err) logger.debug('An error occured', err);
-      else logger.debug('Database synchronized');
-  });
+startServer();
 
 export default app;

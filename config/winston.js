@@ -62,4 +62,4 @@ git.getLastCommit((err, commit) => {
 
 
 
-export default logger;
+module.exports = logger;
