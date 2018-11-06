@@ -20,14 +20,13 @@ const developmentFormat = printf(info => `${info.timestamp} ${info.level}: ${inf
 git.getLastCommit((err, commit) => {
     const prodFormat = printf(info => JSON.stringify({
         service: pjson.name,
-        logger: 'my_winston_logger',
+        logger: 'application_logger',
         hostname: os.hostname(),
         level: info.level,
         msg: info.message,
         meta: {
             service: {
                 commit: commit.shortHash,
-                commitMessage: commit.subject,
                 version: pjson.version,
             },
             logger: {
