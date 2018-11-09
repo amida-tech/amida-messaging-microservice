@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import os from 'os';
 import config from './config';
 import pjson from '../package.json';
@@ -16,41 +17,53 @@ const logger = createLogger({
 
 const developmentFormat = printf(info => `${info.timestamp} ${info.level}: ${info.message}`);
 
-const prodFormat = printf(info => JSON.stringify({
-    service: pjson.name,
-    logger: 'application_logger',
-    hostname: os.hostname(),
-    level: info.level,
-    msg: info.message,
-    meta: {
-        service: {
-            version: pjson.version,
-        },
-        logger: {
-            time: info.timestamp,
-            baz: 'bok',
-        },
-        event: {
-            foo: 'bar',
-        },
-    },
-    err: {
-        err: info.err,
-        stack: info.stack
+const productionFormat = printf((info) => {
+    function parseInfo(infoObj) {
+        return _.omit(infoObj, [
+            'err',
+            'hostname',
+            'level',
+            'logger',
+            'message',
+            'meta',
+            'service',
+            'stack',
+            'timestamp',
+        ]);
     }
-}));
+
+    return JSON.stringify({
+        service: pjson.name,
+        logger: 'application_logger',
+        hostname: os.hostname(),
+        level: info.level,
+        msg: info.message,
+        meta: {
+            service: {
+                version: pjson.version,
+            },
+            logger: {
+                time: info.timestamp,
+            },
+            event: parseInfo(info),
+        },
+        err: {
+            err: info.err,
+            stack: info.stack,
+        },
+    });
+});
 
 if (config.env === 'production') {
     logger.format = combine(
-    timestamp(),
-    // colorize(),
-    prodFormat
+        timestamp(),
+        productionFormat
     );
 } else {
     logger.format = combine(
-    timestamp(),
-    colorize(),
-    developmentFormat
+        timestamp(),
+        colorize(),
+        developmentFormat
     );
 }
 
