@@ -5,6 +5,7 @@ const config = {
     password: postgres.password,
     database: postgres.db,
     host: postgres.host,
+    port: postgres.port,
     dialect: 'postgres',
     migrationStorageTableName: 'sequelize_meta',
     logging: true,
