@@ -22,6 +22,8 @@ const envVarsSchema = Joi.object({
         .default(4001),
     JWT_SECRET: Joi.string().required()
         .description('JWT Secret required to sign'),
+    MESSAGING_SERVICE_THREAD_SCOPES: Joi.array()
+        .items(Joi.string()),
     MESSAGING_SERVICE_PG_DB: Joi.string().required()
         .description('Postgres database name'),
     MESSAGING_SERVICE_PG_PORT: Joi.number()
@@ -63,6 +65,7 @@ module.exports = {
     port: envVars.MESSAGING_SERVICE_PORT,
     jwtSecret: envVars.JWT_SECRET,
     testToken: envVars.MESSAGING_SERVICE_AUTOMATED_TEST_JWT,
+    threadScopes: envVars.MESSAGING_SERVICE_THREAD_SCOPES,
     authMicroService: envVars.AUTH_MICROSERVICE_URL,
     notificationMicroservice: envVars.NOTIFICATION_MICROSERVICE_URL,
     microserviceAccessKey: envVars.PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME,

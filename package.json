@@ -83,6 +83,7 @@
     "eslint-config-airbnb-base": "7.1.0",
     "eslint-plugin-import": "1.16.0",
     "eslint-watch": "2.1.14",
+    "express-jwt-permissions": "false1.2.3",
     "gulp-babel": "6.1.2",
     "gulp-newer": "^1.1.0",
     "gulp-nodemon": "^2.0.6",
