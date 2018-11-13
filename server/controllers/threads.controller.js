@@ -23,7 +23,7 @@ function notifyUsers(users, sender, message) { // eslint-disable-line no-unused-
                 // title: 'New Message',
                 // body: `${sender.username} sent you a message`,
                 title: 'Notification:',
-                body: 'You have a new message',
+                body: 'You have a new message.',
             };
             pushNotificationArray.push(pushNotificationData);
         }
