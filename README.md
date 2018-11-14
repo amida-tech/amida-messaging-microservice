@@ -227,6 +227,10 @@ The port this server will run on.
 
 This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
 
+##### `MESSAGING_SERVICE_THREAD_SCOPES` (Required by test scripts)
+
+This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
+
 ##### `MESSAGING_SERVICE_PG_HOST` (Required)
 
 Hostname of machine the postgres instance is running on.

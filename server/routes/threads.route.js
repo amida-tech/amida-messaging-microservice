@@ -28,13 +28,12 @@ router.route('/')
     );
 
 router.route('/')
-    .get(
-      guard(),
-      threadsCtrl.index
-    );
+    .get(threadsCtrl.index);
 
 router.route('/thread/:threadId/reply')
-    .post(threadsCtrl.reply);
+    .post(
+      guard(),
+      threadsCtrl.reply);
 
 /**
  * url params:
