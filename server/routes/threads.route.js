@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import config from '../../config/config';
-import APIError from '/Users/jonah/Amida/services/amida-messaging-microservice/server/helpers/APIError.js';
+import APIError from '../helpers/APIError.js';
 import httpStatus from 'http-status';
 
 import threadsCtrl from '../controllers/threads.controller';
