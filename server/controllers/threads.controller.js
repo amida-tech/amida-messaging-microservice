@@ -275,7 +275,7 @@ function index(req, res, next) {
     const { logUsername } = req.query;
 
     if (username === logUsername) {
-        sequelize.query('SELECT * FROM "Users" as A inner join "UserThreads" as UserThread on A."id" = UserThread."UserId" inner join "Threads" as E on UserThread."ThreadId" = E."id" and (E."logUserId" = A."id" OR E."logUserId" is null ) inner join "Messages" as LastMessage on E."lastMessageId" = LastMessage."id" Where A.username = :username Order By "lastMessageSent" DESC',
+        sequelize.query('SELECT * FROM "Users" as A inner join "UserThreads" as UserThread on A."id" = UserThread."UserId" inner join "Threads" as E on UserThread."ThreadId" = E."id" inner join "Messages" as LastMessage on E."lastMessageId" = LastMessage."id" Where A.username = :username Order By "lastMessageSent" DESC',
             { replacements: { username }, type: sequelize.QueryTypes.SELECT }
         ).then((logData) => {
             if (!logData) {

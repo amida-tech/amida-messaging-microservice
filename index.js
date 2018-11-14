@@ -12,15 +12,11 @@ Promise = require('bluebird'); // eslint-disable-line no-global-assign
 function startServer() {
   // module.parent check is required to support mocha watch
     if (!module.parent) {
-    // listen on port config.port
         app.listen(config.port, () => {
-            logger.info({
-                service: 'messaging-service',
-                message: 'server started on port',
+            logger.info(`server started on port ${config.port} (${config.env})`, {
                 port: config.port,
                 node_env: config.env,
-            }
-        );
+            });
         });
     }
 }
