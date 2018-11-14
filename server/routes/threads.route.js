@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import config from '../../config/config'
+import config from '../../config/config';
 import APIError from '/Users/jonah/Amida/services/amida-messaging-microservice/server/helpers/APIError.js';
 import httpStatus from 'http-status';
 
@@ -8,17 +8,14 @@ import threadsCtrl from '../controllers/threads.controller';
 
 function guard() {
     return function (req, res, next) {
-      const { scopes } = req.user
-      const found = config.threadScopes.some(r => scopes.includes(r))
-      if ( found ) {
-        return next()
-      }
-      else {
+        const { scopes } = req.user;
+        const found = config.threadScopes.some(r => scopes.includes(r));
+        if (found) {
+            return next();
+        }
         const err = new APIError('Insufficient permissions to interact with thread', 'UNAUTHORIZED_REQUEST', httpStatus.BAD_REQUEST, true);
-        return next(err)
-      } 
-    }
-    
+        return next(err);
+    };
 }
 const router = express.Router(); // eslint-disable-line new-cap
 
