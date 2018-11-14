@@ -227,6 +227,10 @@ The port this server will run on.
 
 This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
 
+##### `MESSAGING_SERVICE_THREAD_SCOPES` 
+
+If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which 
+
 ##### `MESSAGING_SERVICE_PG_HOST` (Required)
 
 Hostname of machine the postgres instance is running on.

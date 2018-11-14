@@ -68,14 +68,15 @@ describe('Threads API:', () => {
         const replyBody = {
             message: 'test reply',
         };
+        const createThreadBody = {
+            participants: ['user0', 'user1'],
+            topic: 'test topic',
+            message: 'test message',
+        };
         before(() => request(app)
             .post(`${baseURL}/threads`)
             .set('Authorization', `Bearer ${auth}`)
-            .send({
-                participants: ['user0', 'user1'],
-                message: 'test message',
-                topic: 'test topic',
-            })
+            .send(createThreadBody)
             .expect(httpStatus.CREATED)
             .then((createMyThreadResponse) => {
                 myThreadId = createMyThreadResponse.body.message.ThreadId;
