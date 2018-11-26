@@ -61,11 +61,28 @@ Therefore, in your Postgres instance, create that user and database now.
 ## Run
 
 ```sh
+# Create initial tables and run migrations
+# Only needs to be run on clean builds  
+# or when new migrations are added
+yarn migrate
+
 # Start server
 yarn start
 
 # Selectively set DEBUG env var to get logs
 DEBUG=amida-messaging-microservice:* yarn start
+```
+
+## Migrations
+
+```sh
+# Create tables and run migrations (migrations will
+# be run in chronological order, and only newly  
+# added migrations will be run)
+yarn migrate
+
+# Undo all migrations (will not undo table creation)
+yarn migrate:undo
 ```
 
 ## Tests
@@ -227,9 +244,9 @@ The port this server will run on.
 
 This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
 
-##### `MESSAGING_SERVICE_THREAD_SCOPES` 
+##### `MESSAGING_SERVICE_THREAD_SCOPES`
 
-If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which 
+If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which
 
 ##### `MESSAGING_SERVICE_PG_HOST` (Required)
 
