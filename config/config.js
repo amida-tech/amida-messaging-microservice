@@ -1,4 +1,3 @@
-require('babel-core/register');
 const Joi = require('joi');
 // require and configure dotenv, will load vars in .env in PROCESS.ENV
 const dotenv = require('dotenv');
