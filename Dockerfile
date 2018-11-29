@@ -1,5 +1,5 @@
 # node image
-FROM node:8.10
+FROM node:8.10.0
 
 # set /app directory as default working directory
 WORKDIR /app/
