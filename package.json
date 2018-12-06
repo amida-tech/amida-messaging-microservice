@@ -12,7 +12,6 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "serve": "node dist/index.js",
     "start:debug": "cross-env DEBUG=amida-messaging-microservice:* yarn start",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo:all",
