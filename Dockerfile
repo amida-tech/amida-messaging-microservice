@@ -23,4 +23,4 @@ COPY --from=builder /app /app
 EXPOSE 4001
 
 # cmd to start service
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "serve"]
