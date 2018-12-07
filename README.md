@@ -288,6 +288,19 @@ Whether an SSL connection shall be used to connect to postgres.
 
 If SSL is enabled with `MESSAGING_SERVICE_PG_SSL_ENABLED` this can be set to a certificate to override the CAs that are trusted while initiating the SSL connection to postgres. Without this set, Mozilla's list of trusted CAs is used. Note that this variable should contain the certificate itself, not a filename.
 
+##### `MESSAGING_SERVICE_JWT_MODE`
+
+There variable corresponds with the type of JWT encryption that is being performed by the chosen auth service. 
+- Valid values are `hmac` or `rsa`.
+
+##### `MESSAGING_SERVICE_JWT_PUBLIC_KEY_PATH`
+
+The location of the public key published by the auth service
+
+##### `MESSAGING_SERVICE_TEST_TOKEN_RSA`
+
+This is the a RSA encrypted JWT that is used by this repo's automated test suite when it makes requests.
+
 ## Integration With Amida Auth Microservice
 
 ##### `AUTH_MICROSERVICE_URL`
