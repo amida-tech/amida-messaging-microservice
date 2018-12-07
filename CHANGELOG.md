@@ -1,5 +1,10 @@
 # Changelog
 
-- Slimmer Dockerfile settings.
+## [Unreleased]
+### Added
+- [ORANGE-910] Create users on messaging at signup
+- [ORANGE-795] Structured JSON log format
+- [ORANGE-481] UUID/Serialized Identifier Support
 
-# [Unreleased]
+### Changed
+- [DEVOPS-365] Slimmer Dockerfile settings
