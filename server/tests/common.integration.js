@@ -13,11 +13,12 @@ if (config.jwtMode === 'rsa') {
     authTokenBad = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTgzMiwidXNlcm5hbWUiOiJ1c2VyQmFkIiwiZW1haWwiOiJ1c2VyQmFkQGFtaWRhLmNvbSIsInNjb3BlcyI6WyJhZG1pbiJdLCJpYXQiOjE1MjQwNzA0NzAsImV4cCI6MTUyNDA3NDA3MH0.iO95yeIiKXLgns8nluv1S0jsSqrM9dJsVsB9wvz_mhBgUJWJbOB_GX1s7CETg89z4sILmkLGgEHsIKNgRQ0WDZmGDqFbFJMYzGzar9ujyifuvU7-QMqEWPkf1LYRJE3cZdbzApG--ddk6hPe5i92QEv35wcqbbepbnGcZQbEC6YYeBpErWolA6oBl53sCJArce1pMbH2R7ou6u-Ad4RKaYJkId50UWv-qal6PBVlF665ae0xF9tXtnU0l974kj54o9ufqqw_ysZtLQfjrIULWRTIkuMLh9WG8f_k865DIIgacQyHM-IxMJHNJ6wWm4r1L-AnZLq46qLZVFR1ZSE7rNQHU8R07SqpJbHGcxOw3Ndn9pCohg4TMoFeoMpguhGsxLD-wcA2fhnTt5oEWUjLEFDdt8z99oUZ4geg_xV-qOuZwtJrr-cNRigHCUr53nV4acq61r2TzvavLD_IYG4db7s0zHzKziYQXEG21s9Bav4yoUSvc7gr6FWv-UhukorMus_9OifPJHIQlpOY-07lP1VzMsR-ZOqJXnj9nrNP1mYcwTugyEMyv31pdbk3Se6IRebZwnY5qvLTDSryl1Y0ro2VakDEOxN1mYBhb76x-5c_StCvQiMizkQHV3YiZ4wom6m50X24rH__x9yByi1XvAcdnAvJZxq1WcTuM5t4F4w';
 } else {
     authToken = config.testToken;
-    auth2Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiYWRtaW4iOnRydWV9.IXN3UeBdUHLxVLHEk9a7IuY6DVQcnuA8ykxRR6JdC_k';
+    auth2Token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDUsInVzZXJuYW1lIjoidXNlcjIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJhZG1pbiI6dHJ1ZSwic2NvcGVzIjpbImNsaW5pY2lhbiIsImFkbWluIl0sImlhdCI6MTU0MjIxMTIxOSwiZXhwIjozNjAwMDAwMDAwMDE1NDIyMDAwMDB9.TK-Q_gqFmBxCqJdMLDRZppx61t0gNT8hCD6-WkixsWc';
     authTokenBad = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJCYWQiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJhZG1pbiI6dHJ1ZX0.Bht75P-tmchDXssNb58r8mzwe4rHpNZVNzYHQtzfp5k';
 }
 
 export const baseURL = (version > 0 ? `/api/v${version}` : '/api');
-export const auth = config.testToken; // user0
-export const auth2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDUsInVzZXJuYW1lIjoidXNlcjIiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJhZG1pbiI6dHJ1ZSwic2NvcGVzIjpbImNsaW5pY2lhbiIsImFkbWluIl0sImlhdCI6MTU0MjIxMTIxOSwiZXhwIjozNjAwMDAwMDAwMDE1NDIyMDAwMDB9.TK-Q_gqFmBxCqJdMLDRZppx61t0gNT8hCD6-WkixsWc'; // user2
+export const auth = authToken; // user0
+export const auth2 = auth2Token; // user2
+export const authBad = authTokenBad;
 export { default as app } from '../../index';
