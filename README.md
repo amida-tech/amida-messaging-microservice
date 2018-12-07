@@ -44,7 +44,6 @@ yarn
 Set environment vars:
 ```sh
 cp .env.example .env
-cp .env .env.test
 ```
 
 In .env, specify the enviroment variables you need.
@@ -168,7 +167,7 @@ Note: If you are testing deploying this service in conjunction with other servic
 ```sh
 docker run -d -p 4001:4001 \
 --name amida-messaging-microservice --network {DOCKER_NETWORK_NAME} \
--v {ABSOLUTE_PATH_TO_YOUR_ENV_FILE}:/app/.env:ro \
+-v {ABSOLUTE_PATH_TO_YOUR_ENV_FILE}:/app/dist/.env:ro \
 amidatech/messaging-service
 ```
 

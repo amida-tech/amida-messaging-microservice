@@ -1,6 +1,4 @@
-import httpStatus from 'http-status';
 import db from '../../config/sequelize';
-import APIError from '../helpers/APIError';
 
 const User = db.User;
 
@@ -13,7 +11,7 @@ const User = db.User;
  * @param next
  * @returns {*}
  */
-function create(req, res, next) {
+function create(req, res, next) { // eslint-disable-line no-unused-vars
     const { username, uuid } = req.user;
     User.findOrCreate({ where: { username, uuid } })
     .spread((user, created) => { // eslint-disable-line no-unused-vars
