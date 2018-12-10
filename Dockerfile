@@ -2,7 +2,7 @@
 FROM node:8.14.0-alpine as builder
 
 # set /app directory as default working directory
-WORKDIR /app
+WORKDIR /app/
 COPY . /app/
 
 # Obtain patch for snyk
@@ -17,7 +17,7 @@ FROM node:8.14.0-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app /app
+COPY --from=builder /app/ /app/
 
 # expose port 4001
 EXPOSE 4001
