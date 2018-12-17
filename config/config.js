@@ -1,42 +1,55 @@
-import Joi from 'joi';
+require('babel-core/register');
+const Joi = require('joi');
 // require and configure dotenv, will load vars in .env in PROCESS.ENV
-require('dotenv').config();
+const dotenv = require('dotenv');
+
+// configure dotenv, will load vars in .env in PROCESS.ENV
+if (process.env.NODE_ENV === 'test') {
+    console.log('using env.test'); // eslint-disable-line no-console
+    dotenv.config({ path: '.env.test' });
+} else {
+    dotenv.config();
+}
 
 // define validation for all the env vars
 const envVarsSchema = Joi.object({
     NODE_ENV: Joi.string()
         .allow(['development', 'production', 'test', 'provision'])
-        .default('development'),
-    PORT: Joi.number()
+        .default('production'),
+    LOG_LEVEL: Joi.string()
+        .default('info'),
+    MESSAGING_SERVICE_PORT: Joi.number()
         .default(4001),
     JWT_SECRET: Joi.string().required()
         .description('JWT Secret required to sign'),
-    PG_DB: Joi.string().required()
+    MESSAGING_SERVICE_THREAD_SCOPES: Joi.array()
+        .items(Joi.string()),
+    MESSAGING_SERVICE_PG_DB: Joi.string().required()
         .description('Postgres database name'),
-    PG_PORT: Joi.number()
+    MESSAGING_SERVICE_PG_PORT: Joi.number()
         .default(5432),
-    PG_HOST: Joi.string()
-        .default('localhost'),
-    PG_USER: Joi.string().required()
+    MESSAGING_SERVICE_PG_HOST: Joi.string(),
+    MESSAGING_SERVICE_PG_USER: Joi.string().required()
         .description('Postgres username'),
-    PG_PASSWD: Joi.string().allow('')
+    MESSAGING_SERVICE_PG_PASSWORD: Joi.string().allow('')
         .description('Postgres password'),
-    PG_SSL: Joi.bool()
+    MESSAGING_SERVICE_PG_SSL_ENABLED: Joi.bool()
         .default(false)
         .description('Enable SSL connection to PostgreSQL'),
-    PG_CERT_CA: Joi.string()
-        .description('SSL certificate CA'), // Certificate itself, not a filename
-    TEST_TOKEN: Joi.string().allow('')
+    MESSAGING_SERVICE_PG_CA_CERT: Joi.string().allow('')
+        .description('SSL certificate CA. This string must be the certificate itself, not a filename.'),
+    MESSAGING_SERVICE_AUTOMATED_TEST_JWT: Joi.string().allow('')
         .description('Test auth token'),
-    AUTH_MICROSERVICE: Joi.string().allow('')
-        .description('Auth microservice endpoint'),
-    NOTIFICATION_MICROSERVICE: Joi.string().allow('')
+    AUTH_MICROSERVICE_URL: Joi.string().allow('')
+        .description('Auth microservice endpoint')
+        .default('http://localhost:4000/api/v1'),
+    NOTIFICATION_MICROSERVICE_URL: Joi.string().allow('')
         .description('Notification Microservice endpoint'),
-    MICROSERVICE_ACCESS_KEY: Joi.string().allow('')
+    PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME: Joi.string().allow('')
         .description('Microservice Access Key'),
-    MICROSERVICE_PASSWORD: Joi.string().allow('')
+    PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD: Joi.string().allow('')
         .description('Microservice Password'),
-    ENABLE_PUSH_NOTIFICATIONS: Joi.bool()
+    PUSH_NOTIFICATIONS_ENABLED: Joi.bool()
         .default(false),
 }).unknown()
     .required();
@@ -46,25 +59,25 @@ if (error) {
     throw new Error(`Config validation error: ${error.message}`);
 }
 
-const config = {
+module.exports = {
     env: envVars.NODE_ENV,
-    port: envVars.PORT,
+    logLevel: envVars.LOG_LEVEL,
+    port: envVars.MESSAGING_SERVICE_PORT,
     jwtSecret: envVars.JWT_SECRET,
-    testToken: envVars.TEST_TOKEN,
-    authMicroService: envVars.AUTH_MICROSERVICE,
-    notificationMicroservice: envVars.NOTIFICATION_MICROSERVICE,
-    microserviceAccessKey: envVars.MICROSERVICE_ACCESS_KEY,
-    microservicePassword: envVars.MICROSERVICE_PASSWORD,
-    enablePushNotifications: envVars.ENABLE_PUSH_NOTIFICATIONS,
+    testToken: envVars.MESSAGING_SERVICE_AUTOMATED_TEST_JWT,
+    threadScopes: envVars.MESSAGING_SERVICE_THREAD_SCOPES,
+    authMicroService: envVars.AUTH_MICROSERVICE_URL,
+    notificationMicroservice: envVars.NOTIFICATION_MICROSERVICE_URL,
+    microserviceAccessKey: envVars.PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME,
+    microservicePassword: envVars.PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD,
+    pushNotificationsEnabled: envVars.PUSH_NOTIFICATIONS_ENABLED,
     postgres: {
-        db: envVars.PG_DB,
-        port: envVars.PG_PORT,
-        host: envVars.PG_HOST,
-        user: envVars.PG_USER,
-        passwd: envVars.PG_PASSWD,
-        ssl: envVars.PG_SSL,
-        ssl_ca_cert: envVars.PG_CERT_CA,
+        db: envVars.MESSAGING_SERVICE_PG_DB,
+        port: envVars.MESSAGING_SERVICE_PG_PORT,
+        host: envVars.MESSAGING_SERVICE_PG_HOST,
+        user: envVars.MESSAGING_SERVICE_PG_USER,
+        password: envVars.MESSAGING_SERVICE_PG_PASSWORD,
+        sslEnabled: envVars.MESSAGING_SERVICE_PG_SSL_ENABLED,
+        sslCaCert: envVars.MESSAGING_SERVICE_PG_CA_CERT,
     },
 };
-
-export default config;
