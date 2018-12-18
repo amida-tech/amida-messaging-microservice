@@ -1,6 +1,3 @@
-import config from '../../config/config';
-const Client = require('node-rest-client').Client;
-const client = new Client();
 /**
  * User Schema
  */
@@ -11,10 +8,21 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             primaryKey: true,
         },
+        uuid: {
+            type: DataTypes.UUID,
+            unique: true,
+        },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
         },
+    }, {
+        indexes: [
+            {
+                fields: ['uuid'],
+            },
+        ],
     });
     // Class methods
     return User;
