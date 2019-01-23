@@ -121,6 +121,9 @@ yarn lint
 
 # Run lint on any file change
 yarn lint:watch
+
+# Run lint and fix
+yarn lint:fix
 ```
 
 ## Other gulp tasks
@@ -202,9 +205,9 @@ Be sure to have your postgres host running and replace the `messaging_service_pg
 -var 'node_env=development'
 -var 'jwt_secret=My-JWT-Token'
 -var 'messaging_service_pg_host=amida-messages-packer-test.some_rand_string.us-west-2.rds.amazonaws.com'
--var 'messaging_service_pg_db=amida_messages'
--var 'messaging_service_pg_user=amida_messages'
--var 'messaging_service_pg_password=amida-messages' template.json```
+-var 'messaging_service_pg_db=amida_messaging_microservice'
+-var 'messaging_service_pg_user=amida'
+-var 'messaging_service_pg_password=amida' template.json```
 2. If the validation from `1.` above succeeds, build the image by running the same command but replacing `validate` with `build`
 3. In the AWS console you can test the build before deployment. To do this, launch an EC2 instance with the built image and visit the health-check endpoint at <host_address>:4000/api/health-check. Be sure to launch the instance with security groups that allow http access on the app port (currently 4000) and access from Postgres port of the data base. You should see an "OK" response.
 4. Enter `aws_access_key` and `aws_secret_key` values in the vars.tf file
@@ -269,12 +272,10 @@ Port on the machine the postgres instance is running on.
 ##### `MESSAGING_SERVICE_PG_DB`
 
 Postgres database name.
-- Setting to `amida_messaging_microservice` is recommended because 3rd parties could be running Amida services using their Postgres instances--which is why the name begins with `amida_`.
 
 ##### `MESSAGING_SERVICE_PG_USER`
 
 Postgres user that will perform operations on behalf of this microservice. Therefore, this user must have permissions to modify the database specified by `MESSAGING_SERVICE_PG_DB`.
-- Setting to `amida_messaging_microservice` is recommended because 3rd parties could be running Amida services using their Postgres instances--which is why the name begins with `amida_`.
 
 ##### `MESSAGING_SERVICE_PG_PASSWORD`
 
