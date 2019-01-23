@@ -387,6 +387,10 @@ describe('Thread API:', () => {
             .get(`${baseURL}/thread/-1`)
             .set('Authorization', `Bearer ${auth}`)
             .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.code).to.equal('MESSAGE_NOT_EXIST');
+                expect(res.body.status).to.equal('ERROR');
+            })
         );
 
         it('should 404 with inaccessible id', () =>
@@ -394,6 +398,10 @@ describe('Thread API:', () => {
             .get(`${baseURL}/thread/${inaccessibleMessageId}`)
             .set('Authorization', `Bearer ${auth}`)
             .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.code).to.equal('MESSAGE_NOT_EXIST');
+                expect(res.body.status).to.equal('ERROR');
+            })
         );
     });
 });

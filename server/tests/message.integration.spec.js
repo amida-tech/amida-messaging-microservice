@@ -242,6 +242,10 @@ describe('Message API:', () => {
             .set('Authorization', `Bearer ${auth2}`)
             .send(goodReplyMessageObject)
             .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.code).to.equal('MESSAGE_NOT_EXIST');
+                expect(res.body.status).to.equal('ERROR');
+            })
         );
 
         it('should not find the parent message if the sender was not a recipient, or sender, of the message specified', () => request(app)
@@ -249,6 +253,10 @@ describe('Message API:', () => {
             .set('Authorization', `Bearer ${authBad}`)
             .send(badReplyMessageObject)
             .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.code).to.equal('MESSAGE_NOT_EXIST');
+                expect(res.body.status).to.equal('ERROR');
+            })
         );
 
         it('sender should be able to reply to a message that they sent', () => request(app)
@@ -289,7 +297,6 @@ describe('Message API:', () => {
         before(() => Message
             .destroy({
                 where: {},
-                truncate: true,
             }).then(() => Message
                 .bulkCreate(testMessageArray)
                 .then((messages) => {
@@ -302,7 +309,6 @@ describe('Message API:', () => {
         after(() => Message
             .destroy({
                 where: {},
-                truncate: true,
             })
         );
 
@@ -575,7 +581,6 @@ describe('Message API:', () => {
         beforeEach(() => Message
             .destroy({
                 where: {},
-                truncate: true,
             }).then(() => request(app)
                 .post(`${baseURL}/message/send`)
                 .set('Authorization', `Bearer ${auth}`)
@@ -623,7 +628,6 @@ describe('Message API:', () => {
         before(() => Message
                       .destroy({
                           where: {},
-                          truncate: true,
                       }).then(() => request(app)
                 .post(`${baseURL}/message/send`)
                 .set('Authorization', `Bearer ${auth}`)
@@ -705,7 +709,6 @@ describe('Message API:', () => {
         after(() => Message
             .destroy({
                 where: {},
-                truncate: true,
             })
         );
     });
@@ -716,7 +719,6 @@ describe('Message API:', () => {
         before(() => Message
                       .destroy({
                           where: {},
-                          truncate: true,
                       }).then(() => request(app)
                 .post(`${baseURL}/message/send`)
                 .set('Authorization', `Bearer ${auth}`)
@@ -754,7 +756,6 @@ describe('Message API:', () => {
         before(() => Message
                       .destroy({
                           where: {},
-                          truncate: true,
                       }).then(() => request(app)
                 .post(`${baseURL}/message/send`)
                 .set('Authorization', `Bearer ${auth}`)
@@ -784,6 +785,10 @@ describe('Message API:', () => {
         it('should 404 if not found', () => request(app)
             .put(`${baseURL}/messages/markAsRead/-1`)
             .set('Authorization', `Bearer ${auth}`)
-            .expect(httpStatus.NOT_FOUND));
+            .expect(httpStatus.NOT_FOUND)
+            .then((res) => {
+                expect(res.body.code).to.equal('UNKNOWN_API');
+                expect(res.body.status).to.equal('ERROR');
+            }));
     });
 });

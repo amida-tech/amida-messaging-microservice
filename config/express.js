@@ -1,5 +1,4 @@
 import express from 'express';
-import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
@@ -10,7 +9,6 @@ import expressWinston from 'express-winston';
 import expressValidation from 'express-validation';
 import helmet from 'helmet';
 import passport from 'passport';
-import actuator from 'express-actuator';
 import winstonInstance from './winston';
 import routes from '../server/routes/index.route';
 import config from './config';
@@ -18,10 +16,6 @@ import APIError from '../server/helpers/APIError';
 import passportConfig from './passport';
 
 const app = express();
-
-if (config.env === 'development') {
-    app.use(logger('dev'));
-}
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -37,10 +31,14 @@ app.use(helmet());
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 
+// eslint-disable-next-line import/newline-after-import
+const swStats = require('swagger-stats');
+app.use(swStats.getMiddleware({}));
+
 // enable detailed API logging in dev env
-if (config.env === 'development') {
-    expressWinston.requestWhitelist.push('body');
-    expressWinston.responseWhitelist.push('body');
+if (config.env === 'development' || config.env === 'production') {
+    expressWinston.requestWhitelist = ['url', 'method', 'httpVersion', 'originalUrl', 'query'];
+    expressWinston.responseWhitelist = ['statusCode', 'responseTime'];
     app.use(expressWinston.logger({
         winstonInstance,
         meta: true, // optional: log meta data about request (defaults to true)
@@ -53,9 +51,6 @@ if (config.env === 'development') {
 passportConfig(passport);
 app.use(passport.initialize());
 
-// set up express actuator
-app.use(actuator('/actuator'));
-
 // mount all routes on /api path
 app.use('/api', routes);
 
@@ -64,20 +59,28 @@ app.use((err, req, res, next) => {
     if (err instanceof expressValidation.ValidationError) {
         // validation error contains errors which is an array of error each containing message[]
         const unifiedErrorMessage = err.errors.map(error => error.messages.join('. ')).join(' and ');
-        const error = new APIError(unifiedErrorMessage, err.status, true);
+        const error = new APIError(unifiedErrorMessage, 'UNKNOWN_ERROR', err.status, true);
         return next(error);
-    } else if (!(err instanceof APIError)) {
-        const apiError = new APIError(err.message, err.status, err.isPublic);
-        return next(apiError);
     }
     return next(err);
 });
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-    const err = new APIError('API not found', httpStatus.NOT_FOUND);
+    const err = new APIError('API not found', 'UNKNOWN_API', httpStatus.NOT_FOUND, true);
     return next(err);
 });
+
+
+// error handler, send stacktrace only during development
+app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
+    res.status(err.status || 500).json({
+        status: 'ERROR',
+        code: err.isPublic ? err.message.code : 'UNKNOWN_ERROR',
+        message: err.isPublic ? err.message.message : httpStatus[err.status],
+        stack: config.env === 'development' ? err.stack : {},
+    })
+);
 
 // log error in winston transports except when executing test suite
 if (config.env !== 'test') {
@@ -85,13 +88,5 @@ if (config.env !== 'test') {
         winstonInstance,
     }));
 }
-
-// error handler, send stacktrace only during development
-app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
-    res.status(err.status).json({
-        message: err.isPublic ? err.message : httpStatus[err.status],
-        stack: config.env === 'development' ? err.stack : {},
-    })
-);
 
 export default app;

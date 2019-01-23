@@ -1,35 +1,35 @@
 # Amida Messaging Microservice
 
+# Table of Contents
 
-## Design
+  - [Design](#design)
+  - [Development](#development)
+  - [Deployment](#deployment)
+  - [Environment Variables](#Environment-Variables)
 
-### API Spec
+# Design
+
+## API Spec
+
 The spec can be viewed at https://amida-tech.github.io/amida-messaging-microservice/.
 
 To update the spec, first edit the files in the `docs` directory. Then run `aglio -i docs/src/docs.md --theme flatly -o index.html`.
 
 Merge the resulting changes to the `gh-pages` branch of the repository.
 
-### Features
+## Logging
 
-| Feature                                | Summary                                                                                                                                                                                                                                                     |
-|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ES6 via Babel                  	 	 | ES6 support using [Babel](https://babeljs.io/).  |
-| Code Linting               			 | Linting with [eslint](https://www.npmjs.com/package/eslint)                                                                                            |
-| Auto server restart                  	 | Restart the server using [nodemon](https://github.com/remy/nodemon) in real-time anytime an edit is made, with babel compilation and eslint.                                                                                                                                                                            |
-| ES6 Code Coverage via [istanbul](https://www.npmjs.com/package/istanbul)                  | Supports code coverage of ES6 code using istanbul and mocha. Code coverage reports are saved in `coverage/` directory post `yarn test` execution. Open `coverage/lcov-report/index.html` to view coverage report. `yarn test` also displays code coverage summary on console. Code coverage can also be enforced overall and per file as well, configured via .istanbul.yml                                                                                                                                                                            |
-| Debugging via [debug](https://www.npmjs.com/package/debug)           | Instead of inserting and deleting console.log you can replace it with the debug function and just leave it there. You can then selectively debug portions of your code by setting DEBUG env variable. If DEBUG env variable is not set, nothing is displayed to the console.                       |
-| Promisified Code via [bluebird](https://github.com/petkaantonov/bluebird)           | We love promise, don't we ? All our code is promisified and even so our tests via [supertest-as-promised](https://www.npmjs.com/package/supertest-as-promised).                       |
-| API parameter validation via [express-validation](https://www.npmjs.com/package/express-validation)           | Validate body, params, query, headers and cookies of a request (via middleware) and return a response with errors; if any of the configured validation rules fail. You won't anymore need to make your route handler dirty with such validations. |
-| Pre-commit hooks           | Runs lint and tests before any commit is made locally, making sure that only tested and quality code is committed
-| Secure app via [helmet](https://github.com/helmetjs/helmet)           | Helmet helps secure Express apps by setting various HTTP headers. |
-| Uses [yarn](https://yarnpkg.com) over npm            | Uses new released yarn package manager by facebook. You can read more about it [here](https://code.facebook.com/posts/1840075619545360) |
+Universal logging library [winston](https://www.npmjs.com/package/winston) is used for logging. It has support for multiple transports. A transport is essentially a storage device for your logs. Each instance of a winston logger can have multiple transports configured at different levels. For example, one may want error logs to be stored in a persistent remote location (like a database), but all logs output to the console or a local file. We just log to the console for simplicity, but you can configure more transports as per your requirement.
 
-- CORS support via [cors](https://github.com/expressjs/cors)
-- Uses [http-status](https://www.npmjs.com/package/http-status) to set http status code. It is recommended to use `httpStatus.INTERNAL_SERVER_ERROR` instead of directly using `500` when setting status code.
-- Has `.editorconfig` which helps developers define and maintain consistent coding styles between different editors and IDEs.
+# Development
 
-## Developing locally
+## Versions
+
+`yarn start` fails if your Node.js version is v10.4.1. Exactly all of the Node.js versions that fail in this way are unknown.
+
+Node.js v8.11.1 is known to work.
+
+## Setup
 
 Install yarn:
 ```js
@@ -46,8 +46,25 @@ Set environment vars:
 cp .env.example .env
 ```
 
-Start server:
+In .env, specify the enviroment variables you need.
+
+Create the database:
+
+When you `yarn start` the first time (see the [Development > Run](#Run) section), a script will automatically create the database schema. However, this will only work if your postgres instance has:
+
+1. A database matching your `.env` file's `MESSAGING_SERVICE_PG_DB` name
+2. A user matching your `.env` file's `MESSAGING_SERVICE_PG_USER` name, which has sufficient permissions to modify your `MESSAGING_SERVICE_PG_DB`.
+
+Therefore, in your Postgres instance, create that user and database now.
+
+## Run
+
 ```sh
+# Create initial tables and run migrations
+# Only needs to be run on clean builds  
+# or when new migrations are added
+yarn migrate
+
 # Start server
 yarn start
 
@@ -55,12 +72,25 @@ yarn start
 DEBUG=amida-messaging-microservice:* yarn start
 ```
 
-Tests:
+## Migrations
 
-Create a JWT with the username value 'user0' and set `TEST_TOKEN={token}` in your .env file or an evironment variable. You can easily create a token using the amida-auth-microservice
+```sh
+# Create tables and run migrations (migrations will
+# be run in chronological order, and only newly  
+# added migrations will be run)
+yarn migrate
+
+# Undo all migrations (will not undo table creation)
+yarn migrate:undo
+```
+
+## Tests
+
+Create a JWT with the username value 'user0' and set `MESSAGING_SERVICE_AUTOMATED_TEST_JWT={token}` in your .env file or an evironment variable. You can easily create a token using the amida-auth-microservice
 
 ```sh
 # Run tests written in ES6
+# Make sure .env.test exists
 yarn test
 
 # Run test along with code coverage
@@ -73,16 +103,21 @@ yarn test:watch
 yarn test:check-coverage
 ```
 
-Lint:
+## Lint
+
 ```sh
 # Lint code with ESLint
 yarn lint
 
 # Run lint on any file change
 yarn lint:watch
+
+# Run lint and fix
+yarn lint:fix
 ```
 
-Other gulp tasks:
+## Other gulp tasks
+
 ```sh
 # Wipe out dist and coverage directory
 gulp clean
@@ -91,26 +126,66 @@ gulp clean
 gulp
 ```
 
-## Deployment
+## Enabling Push Notifications with the Notifications Microservice
 
-### Manual deployment with `pm2`
+Note: This is optional. It is here in its own section because it is complicated and not necessary unless you are developing/testing something that uses push notifications.
+
+- Set up and start the [Amida Notification Microservice](https://github.com/amida-tech/amida-notification-microservice)
+- In your `.env` file, set the `NOTIFICATION_MICROSERVICE_URL` and push notifications -related environment variables with values matching those set in the `amida-notification-microserivce`
+
+# Deployment
+
+## Deployment Via Docker
+
+Docker deployment requires two docker containers:
+- An instance of the official Postgres docker image (see: https://hub.docker.com/_/postgres/).
+- An instance of this service's docker image (see: https://hub.docker.com/r/amidatech/messaging-service/).
+
+The Postgres container must be running _before_ the messaging-service container is started because, upon initial run, the messaging-service container defines the schema within the Postgres database.
+
+Also, the containers communicate via a docker network. Therefore,
+
+1. First, create the Docker network:
+
 ```sh
-# compile to ES5
-1. yarn build
-
-# upload dist/ to your server
-2. scp -rp dist/ user@dest:/path
-
-# install production dependencies only
-3. yarn --production
-
-# Use any process manager to start your services
-4. pm2 start dist/index.js
+docker network create {DOCKER_NETWORK_NAME}
 ```
 
-### Deployment to AWS with Packer and Terraform
+2. Start the postgres container:
+
+```sh
+docker run -d --name {MESSAGING_SERVICE_PG_HOST} --network {DOCKER_NETWORK_NAME} \
+-e POSTGRES_DB={MESSAGING_SERVICE_PG_DB} \
+-e POSTGRES_USER={MESSAGING_SERVICE_PG_USER} \
+-e POSTGRES_PASSWORD={MESSAGING_SERVICE_PG_PASSWORD} \
+postgres:9.6
+```
+
+3. Create a `.env` file for use by this service's docker container. A good starting point is `.env.production`.
+
+Note: To make push notifications work, follow the steps in section [Enabling Push Notifications with the Notifications Microservice](#Enabling-Push-Notifications-with-the-Notifications-Microservice)
+
+Note: If you are testing deploying this service in conjunction with other services or to connect to a specific front-end client it is vital that the JWT_SECRET environment variables match up between the different applications.
+
+```sh
+docker run -d -p 4001:4001 \
+--name amida-messaging-microservice --network {DOCKER_NETWORK_NAME} \
+-v {ABSOLUTE_PATH_TO_YOUR_ENV_FILE}:/app/dist/.env:ro \
+amidatech/messaging-service
+```
+
+### With docker-compose
+
+Alternatively, there is also a docker-compose.yml file. Therefore, you can:
+
+```sh
+docker-compose up
+```
+
+## Deployment to AWS with Packer and Terraform
+
 You will need to install [pakcer](https://www.packer.io/) and [terraform](https://www.terraform.io/) installed on your local machine.
-Be sure to have your postgres host running and replace the `pg_host` value in the command below with the postgres host address.
+Be sure to have your postgres host running and replace the `messaging_service_pg_host` value in the command below with the postgres host address.
 1. First validate the AMI with a command similar to ```packer validate -var 'aws_access_key=myAWSAcessKey'
 -var 'aws_secret_key=myAWSSecretKey'
 -var 'build_env=development'
@@ -119,10 +194,10 @@ Be sure to have your postgres host running and replace the `pg_host` value in th
 -var 'ami_name=api-messaging-service-boilerplate'
 -var 'node_env=development'
 -var 'jwt_secret=My-JWT-Token'
--var 'pg_host=amid-messages-packer-test.some_rand_string.us-west-2.rds.amazonaws.com'
--var 'pg_db=amida_messages'
--var 'pg_user=amida_messages'
--var 'pg_passwd=amida-messages' template.json```
+-var 'messaging_service_pg_host=amida-messages-packer-test.some_rand_string.us-west-2.rds.amazonaws.com'
+-var 'messaging_service_pg_db=amida_messaging_microservice'
+-var 'messaging_service_pg_user=amida'
+-var 'messaging_service_pg_password=amida' template.json```
 2. If the validation from `1.` above succeeds, build the image by running the same command but replacing `validate` with `build`
 3. In the AWS console you can test the build before deployment. To do this, launch an EC2 instance with the built image and visit the health-check endpoint at <host_address>:4000/api/health-check. Be sure to launch the instance with security groups that allow http access on the app port (currently 4000) and access from Postgres port of the data base. You should see an "OK" response.
 4. Enter `aws_access_key` and `aws_secret_key` values in the vars.tf file
@@ -130,19 +205,115 @@ Be sure to have your postgres host running and replace the `pg_host` value in th
 6. run `terraform apply` to deploy
 7. To get SNS Alarm notifications be sure that you are subscribed to SNS topic arn:aws:sns:us-west-2:844297601570:ops_team_alerts and you have confirmed subscription
 
-
-
 Further details can be found in the `deploy` directory.
 
-### Docker deployment
-Docker Compose:
-```sh
-docker-compose up
-```
+## Kubernetes Deployment
 
-### Kubernetes Deployment
 See the [paper](https://paper.dropbox.com/doc/Amida-Microservices-Kubernetes-Deployment-Xsz32zX8nwT9qctitGNVc) write-up for instructions on how to deploy with Kubernetes. The `kubernetes.yml` file contains the deployment definition for the project.
 
-## Logging
+# Environment Variables
 
-Universal logging library [winston](https://www.npmjs.com/package/winston) is used for logging. It has support for multiple transports. A transport is essentially a storage device for your logs. Each instance of a winston logger can have multiple transports configured at different levels. For example, one may want error logs to be stored in a persistent remote location (like a database), but all logs output to the console or a local file. We just log to the console for simplicity, but you can configure more transports as per your requirement.
+Environment variables are applied in this order, with the former overwritten by the latter:
+
+1. Default values, which are set automatically by [joi](https://github.com/hapijs/joi) within `config.js`, even if no such environment variable is specified whatsoever.
+2. Variables specified by the `.env` file.
+3. Variables specified via the command line.
+
+Variables are listed below in this format:
+
+##### `VARIABLE_NAME` (Required (if it actually is)) [`the default value`]
+
+A description of what the variable is or does.
+- A description of what to set the variable to, whether that be an example, or what to set it to in development or production, or how to figure out how to set it, etc.
+- Perhaps another example value, etc.
+
+## Messaging Microservice
+
+##### `NODE_ENV` (Required) [`development`]
+
+- Valid values are `development`, `production`, and `test`.
+
+##### `LOG_LEVEL` [`info`]
+
+- Valid values are [winston](https://github.com/winstonjs/winston) logging levels (`error`, `warn`, etc.).
+
+##### `MESSAGING_SERVICE_PORT` (Required) [`4001`]
+
+The port this server will run on.
+- When in development, by default set to `4001`, because other Amida microservices run, by default, on other `400x` ports.
+
+##### `MESSAGING_SERVICE_AUTOMATED_TEST_JWT` (Required by test scripts)
+
+This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
+
+##### `MESSAGING_SERVICE_THREAD_SCOPES`
+
+If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which
+
+##### `MESSAGING_SERVICE_PG_HOST` (Required)
+
+Hostname of machine the postgres instance is running on.
+- When using docker, set to the name of the docker container running postgres. Setting to `amida-messaging-microservice-db` is recommended.
+
+##### `MESSAGING_SERVICE_PG_PORT` (Required) [`5432`]
+
+Port on the machine the postgres instance is running on.
+
+##### `MESSAGING_SERVICE_PG_DB`
+
+Postgres database name.
+
+##### `MESSAGING_SERVICE_PG_USER`
+
+Postgres user that will perform operations on behalf of this microservice. Therefore, this user must have permissions to modify the database specified by `MESSAGING_SERVICE_PG_DB`.
+
+##### `MESSAGING_SERVICE_PG_PASSWORD`
+
+Password of postgres user `MESSAGING_SERVICE_PG_USER`.
+
+##### `MESSAGING_SERVICE_PG_SSL_ENABLED` [`false`]
+
+Whether an SSL connection shall be used to connect to postgres.
+
+##### `MESSAGING_SERVICE_PG_CA_CERT`
+
+If SSL is enabled with `MESSAGING_SERVICE_PG_SSL_ENABLED` this can be set to a certificate to override the CAs that are trusted while initiating the SSL connection to postgres. Without this set, Mozilla's list of trusted CAs is used. Note that this variable should contain the certificate itself, not a filename.
+
+## Integration With Amida Auth Microservice
+
+##### `AUTH_MICROSERVICE_URL`
+
+URL of the Auth Service API.
+- `.env.production` sets this to to `https://amida-auth-microservice:4000/api/v1`, which assumes:
+  - `amida-auth-microservice` is the name of the docker container running the Auth Service.
+  - `4000` is the port the Auth Service is running on in its container.
+  - The Auth Service's docker container and this service's docker container are a part of the same docker network.
+
+##### `JWT_SECRET`
+
+Must match value of the JWT secret being used by your `amida-auth-microservice` instance.
+- See [that repo](https://github.com/amida-tech/amida-auth-microservice) for details.
+
+## Integration With Amida Notification Microservice
+
+##### `NOTIFICATION_MICROSERVICE_URL`
+
+URL of Amida Notification Microservice API.
+- `.env.production` sets this to to `https://amida-notification-microservice:4000/api/v1`, which assumes:
+  - `amida-notification-microservice` is the name of the docker container running the Notification Service.
+  - `4003` is the port the Notification Service is running on in its container.
+  - The Notification Service's docker container and this service's docker container are a part of the same docker network.
+
+##### `PUSH_NOTIFICATIONS_ENABLED` (Required) [`false`]
+
+**WARNING**: When `true`, the other push notification-related environment variables must be set correctly. Not doing so is an unsupported state that is error and crash prone.
+
+##### `PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME`
+
+The username of the service user that authenticates against `amida-auth-microservice` and performs requests against the `amida-notification-microservice` API.
+- `.env.example` sets this to `oucuYaiN6pha3ahphiiT`, which is for development only. In production, set this to a different value.
+
+##### `PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD`
+
+The password of the user specified by `PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME`.
+- `.env.example` sets this to `@TestTest1`, which is for development only. In production, set this to a different value.

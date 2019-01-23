@@ -20,21 +20,19 @@ describe('## Misc', () => {
         it('should return 404 status', () => request(app)
             .get('/api/404')
             .expect(httpStatus.NOT_FOUND)
-            .then(res => expect(res.body.message).to.equal('Not Found'))
+            .then((res) => {
+                expect(res.body.code).to.equal('UNKNOWN_API');
+                expect(res.body.status).to.equal('ERROR');
+                expect(res.body.message).to.equal('API not found');
+            })
         );
     });
 
     describe('# GET /actuator', () => {
-        it('/info should return app information', () => request(app)
-            .get('/actuator/info')
+        it('/stats should return app statistics', () => request(app)
+            .get('/swagger-stats/stats')
             .expect(httpStatus.OK)
-            .then(res => expect(res.body.build).to.exist)
-        );
-
-        it('/metrics should return app metrics', () => request(app)
-            .get('/actuator/metrics')
-            .expect(httpStatus.OK)
-            .then(res => expect(res.body.mem).to.exist)
+            .then(res => expect(res.body.all).to.exist)
         );
     });
 });
