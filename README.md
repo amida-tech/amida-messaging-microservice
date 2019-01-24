@@ -44,7 +44,6 @@ yarn
 Set environment vars:
 ```sh
 cp .env.example .env
-cp .env .env.test
 ```
 
 In .env, specify the enviroment variables you need.
@@ -61,11 +60,28 @@ Therefore, in your Postgres instance, create that user and database now.
 ## Run
 
 ```sh
+# Create initial tables and run migrations
+# Only needs to be run on clean builds  
+# or when new migrations are added
+yarn migrate
+
 # Start server
 yarn start
 
 # Selectively set DEBUG env var to get logs
 DEBUG=amida-messaging-microservice:* yarn start
+```
+
+## Migrations
+
+```sh
+# Create tables and run migrations (migrations will
+# be run in chronological order, and only newly  
+# added migrations will be run)
+yarn migrate
+
+# Undo all migrations (will not undo table creation)
+yarn migrate:undo
 ```
 
 ## Tests
@@ -95,6 +111,9 @@ yarn lint
 
 # Run lint on any file change
 yarn lint:watch
+
+# Run lint and fix
+yarn lint:fix
 ```
 
 ## Other gulp tasks
@@ -151,7 +170,7 @@ Note: If you are testing deploying this service in conjunction with other servic
 ```sh
 docker run -d -p 4001:4001 \
 --name amida-messaging-microservice --network {DOCKER_NETWORK_NAME} \
--v {ABSOLUTE_PATH_TO_YOUR_ENV_FILE}:/app/.env:ro \
+-v {ABSOLUTE_PATH_TO_YOUR_ENV_FILE}:/app/dist/.env:ro \
 amidatech/messaging-service
 ```
 
@@ -176,9 +195,9 @@ Be sure to have your postgres host running and replace the `messaging_service_pg
 -var 'node_env=development'
 -var 'jwt_secret=My-JWT-Token'
 -var 'messaging_service_pg_host=amida-messages-packer-test.some_rand_string.us-west-2.rds.amazonaws.com'
--var 'messaging_service_pg_db=amida_messages'
--var 'messaging_service_pg_user=amida_messages'
--var 'messaging_service_pg_password=amida-messages' template.json```
+-var 'messaging_service_pg_db=amida_messaging_microservice'
+-var 'messaging_service_pg_user=amida'
+-var 'messaging_service_pg_password=amida' template.json```
 2. If the validation from `1.` above succeeds, build the image by running the same command but replacing `validate` with `build`
 3. In the AWS console you can test the build before deployment. To do this, launch an EC2 instance with the built image and visit the health-check endpoint at <host_address>:4000/api/health-check. Be sure to launch the instance with security groups that allow http access on the app port (currently 4000) and access from Postgres port of the data base. You should see an "OK" response.
 4. Enter `aws_access_key` and `aws_secret_key` values in the vars.tf file
@@ -227,9 +246,9 @@ The port this server will run on.
 
 This is the `amida-auth-microservice` JWT that is used by this repo's automated test suite when it makes requests.
 
-##### `MESSAGING_SERVICE_THREAD_SCOPES` 
+##### `MESSAGING_SERVICE_THREAD_SCOPES`
 
-If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which 
+If you choose to restrict the create-thread & reply-to-thread endpoints to users with certain permissions scopes this is the array to set those scope values which
 
 ##### `MESSAGING_SERVICE_PG_HOST` (Required)
 
@@ -243,12 +262,10 @@ Port on the machine the postgres instance is running on.
 ##### `MESSAGING_SERVICE_PG_DB`
 
 Postgres database name.
-- Setting to `amida_messaging_microservice` is recommended because 3rd parties could be running Amida services using their Postgres instances--which is why the name begins with `amida_`.
 
 ##### `MESSAGING_SERVICE_PG_USER`
 
 Postgres user that will perform operations on behalf of this microservice. Therefore, this user must have permissions to modify the database specified by `MESSAGING_SERVICE_PG_DB`.
-- Setting to `amida_messaging_microservice` is recommended because 3rd parties could be running Amida services using their Postgres instances--which is why the name begins with `amida_`.
 
 ##### `MESSAGING_SERVICE_PG_PASSWORD`
 
