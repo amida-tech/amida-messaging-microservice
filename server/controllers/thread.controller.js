@@ -43,24 +43,14 @@ function findFirstUnreadMessageId(thread, allMessages) {
     return minUnreadMessageId;
 }
 
-function findLastReadMessageId(thread, allMessages) {
-    let maxCreatedDate;
-    let maxCreatedMessageId;
-    let j;
-    for (j = 0; j < allMessages.length; j++) { // eslint-disable-line no-plusplus
-        if (allMessages[j].originalMessageId !== thread.originalMessageId) {
-            continue; // eslint-disable-line no-continue
-        }
-        if (maxCreatedMessageId) {
-            if (maxCreatedDate < allMessages[j].readAt) {
-                maxCreatedDate = allMessages[j].readAt;
-                maxCreatedMessageId = allMessages[j].id;
-            }
-        } else {
-            maxCreatedMessageId = allMessages[j].id;
-        }
-    }
-    return maxCreatedMessageId;
+function findLastMessageId(thread, allMessages) {
+    return allMessages
+    .filter(message => message.originalMessageId === thread.originalMessageId)
+    .reduce((accumulatorMessage, currentMessage) => (
+        currentMessage.createdAt > accumulatorMessage.createdAt
+            ? currentMessage
+            : accumulatorMessage)
+    ).id;
 }
 
 function findFirstSubjectText(thread, allMessages) {
@@ -127,7 +117,7 @@ function list(req, res, next) {
                           = findFirstUnreadMessageId(threads[i], allMessages);
                     } else {
                         threads[i].refMessageId
-                          = findLastReadMessageId(threads[i], allMessages);
+                          = findLastMessageId(threads[i], allMessages);
                     }
                     threads[i].subject
                       = findFirstSubjectText(threads[i], allMessages);
