@@ -1,6 +1,6 @@
 
 module.exports = {
-    up(queryInterface, Sequelize) {
+    up(queryInterface, Sequelize) { // eslint-disable-line no-unused-vars
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -11,7 +11,7 @@ module.exports = {
             unique: true,
         });
     },
-    down(queryInterface, Sequelize) {
+    down(queryInterface, Sequelize) { // eslint-disable-line no-unused-vars
         return queryInterface.removeConstraint('Users', 'username_unique_idx');
     },
 };

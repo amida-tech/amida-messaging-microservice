@@ -1,13 +1,14 @@
-const config = require('../../config/config');
-const db = require('../../config/sequelize');
 const rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
+const config = require('../../config/config');
+const db = require('../../config/sequelize');
+const logger = require('../../config/winston');
 
 const User = db.User;
 
 let adminToken = null;
-let usersUpdated = 0;
+let usersUpdated = 0; // eslint-disable-line no-unused-vars
 
 module.exports = {
     up(queryInterface, Sequelize) {
@@ -56,9 +57,10 @@ module.exports = {
 
                     const userArray = [];
                     data.forEach((user) => {
-                        user.username = user.username.toLowerCase();
-                        user.email = user.email.toLowerCase();
-                        userArray[user.email] = user;
+                        const userLowerCase = user;
+                        userLowerCase.username = user.username.toLowerCase();
+                        userLowerCase.email = user.email.toLowerCase();
+                        userArray[user.email] = userLowerCase;
                     });
 
 
@@ -67,20 +69,20 @@ module.exports = {
                             uuid: { $eq: null },
                         },
                     }).then((users) => {
-                        // console.log(users)
                         if (users.length > 0) {
                             users.forEach((user) => {
+                                // eslint-disable-next-line no-param-reassign
                                 user.username = user.username.toLowerCase();
                                 if (!(user.username in userArray)) {
                                     const newUUID = uuidv4();
-                                    console.log('User with email ', user.username, ' is missing from auth service');
+                                    logger.info('User with email ', user.username, ' is missing from auth service');
                                     User.update({ uuid: newUUID }, { where: { id: user.id } });
-                                    usersUpdated++;
+                                    usersUpdated += 1;
                                 } else {
                                     User.update(
                                         { uuid: userArray[user.username].uuid },
                                         { where: { id: user.id } });
-                                    usersUpdated++;
+                                    usersUpdated += 1;
                                 }
                             });
                         }
@@ -88,9 +90,8 @@ module.exports = {
                 });
             }
             );
-
     },
-    down(queryInterface) {
+    down(queryInterface, Sequelize) { // eslint-disable-line no-unused-vars
         return queryInterface.removeColumn('Users', 'uuid');
     },
 };
