@@ -9,6 +9,7 @@
   * `yarn test` now runs without auth service
   * `yarn jenkins` includes DB creation, migrations, etc.
 - Update `package.json:engines`
+- Update `docker-compose.yml` including postgres 9.4.11 --> 9.6
 
 
 ## [2.5.0] -- 2018-12-12
