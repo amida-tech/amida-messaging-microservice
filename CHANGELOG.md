@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+### Added
+- Prepush githook for `yarn lint` and `yarn test` with `npm:husky`
+
+### Changed
+- `yarn test` command changed to _only_ run tests
+  * `yarn test` now runs without auth service
+  * `yarn jenkins` includes DB creation, migrations, etc.
+- Update `package.json:engines`
+
+
 ## [2.5.0] -- 2018-12-12
 ### Added
 - [ORANGE-910] Create users on messaging at signup

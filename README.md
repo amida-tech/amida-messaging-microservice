@@ -92,8 +92,11 @@ yarn migrate:undo
 Create a JWT with the username value 'user0' and set `MESSAGING_SERVICE_AUTOMATED_TEST_JWT={token}` in your .env file or an evironment variable. You can easily create a token using the amida-auth-microservice
 
 ```sh
-# Run tests written in ES6
 # Make sure .env.test exists
+# deletes db, creates db, runs migrations and then tests
+yarn jenkins
+
+# Only run the tests (assumes migrations have been run)
 yarn test
 
 # Run test along with code coverage
