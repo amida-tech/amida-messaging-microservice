@@ -43,10 +43,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
+
         readAt: {
             type: DataTypes.DATE,
             allowNull: true,
@@ -74,20 +71,11 @@ module.exports = (sequelize, DataTypes) => {
                     where: {
                         owner: user.username,
                         isDeleted: false,
-                        isArchived: false,
                     },
                 };
             },
-            findAllForUser(user) {
-                return {
-                    where: {
-                        owner: user.username,
-                    },
-                };
-            }
         },
     });
-
     // Class methods
 
     return Message;

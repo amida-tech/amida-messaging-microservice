@@ -1,6 +1,6 @@
 # Group Messages
 ## Send a message [/message/send]
-### Create new Patient [POST]
+### Create new Message [POST]
 Send a message to any number of recipients.
 
 + Parameters
@@ -19,7 +19,6 @@ Send a message to any number of recipients.
 
             {
                 to: ["johnDoe", "janeDoe"]
-                from: "johnJane",
                 subject: "This API Rocks!",
                 message: "This message is longer than it appears...",
             }
@@ -107,7 +106,6 @@ Reply to an existing message.
 
             {
                 to: ["johnDoe", "janeDoe"]
-                from: "johnJane",
                 subject: "This API Rocks!",
                 message: "This message is longer than it appears...",
             }
