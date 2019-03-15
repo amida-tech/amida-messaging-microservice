@@ -1,4 +1,7 @@
 # Amida Messaging Microservice
+[![dependencies Status](https://david-dm.org/amida-tech/amida-messaging-microservice/status.svg)](https://david-dm.org/amida-tech/amida-messaging-microservice)
+[![devDependencies Status](https://david-dm.org/amida-tech/amida-messaging-microservice/dev-status.svg)](https://david-dm.org/amida-tech/amida-messaging-microservice?type=dev)
+[![Jenkins CI](https://jenkins.amida.com/buildStatus/icon?job=Messaging%20Microservice%20Unit%20Test/)](https://jenkins.amida.com/job/Messaging%20Microservice%20Unit%20Test/)
 
 # Table of Contents
 
