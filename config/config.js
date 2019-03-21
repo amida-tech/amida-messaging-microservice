@@ -42,7 +42,7 @@ const envVarsSchema = Joi.object({
         .description('Test auth token'),
     AUTH_MICROSERVICE_URL: Joi.string().allow('')
         .description('Auth microservice endpoint')
-        .default('http://localhost:4000/api/v1'),
+        .default('http://localhost:4000/api/v2'),
     NOTIFICATION_MICROSERVICE_URL: Joi.string().allow('')
         .description('Notification Microservice endpoint'),
     PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME: Joi.string().allow('')

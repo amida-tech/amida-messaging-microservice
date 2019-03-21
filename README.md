@@ -30,7 +30,7 @@ Universal logging library [winston](https://www.npmjs.com/package/winston) is us
 
 `yarn start` fails if your Node.js version is v10.4.1. Exactly all of the Node.js versions that fail in this way are unknown.
 
-Node.js v8.11.1 is known to work.
+Node.js v8.14 is known to work.
 
 ## Setup
 
@@ -92,8 +92,11 @@ yarn migrate:undo
 Create a JWT with the username value 'user0' and set `MESSAGING_SERVICE_AUTOMATED_TEST_JWT={token}` in your .env file or an evironment variable. You can easily create a token using the amida-auth-microservice
 
 ```sh
-# Run tests written in ES6
 # Make sure .env.test exists
+# deletes db, creates db, runs migrations and then tests
+yarn jenkins
+
+# Only run the tests (assumes migrations have been run)
 yarn test
 
 # Run test along with code coverage
@@ -287,7 +290,7 @@ If SSL is enabled with `MESSAGING_SERVICE_PG_SSL_ENABLED` this can be set to a c
 ##### `AUTH_MICROSERVICE_URL`
 
 URL of the Auth Service API.
-- `.env.production` sets this to to `https://amida-auth-microservice:4000/api/v1`, which assumes:
+- `.env.production` sets this to to `https://amida-auth-microservice:4000/api/v2`, which assumes:
   - `amida-auth-microservice` is the name of the docker container running the Auth Service.
   - `4000` is the port the Auth Service is running on in its container.
   - The Auth Service's docker container and this service's docker container are a part of the same docker network.
@@ -302,7 +305,7 @@ Must match value of the JWT secret being used by your `amida-auth-microservice` 
 ##### `NOTIFICATION_MICROSERVICE_URL`
 
 URL of Amida Notification Microservice API.
-- `.env.production` sets this to to `https://amida-notification-microservice:4000/api/v1`, which assumes:
+- `.env.production` sets this to to `https://amida-notification-microservice:4000/api/v2`, which assumes:
   - `amida-notification-microservice` is the name of the docker container running the Notification Service.
   - `4003` is the port the Notification Service is running on in its container.
   - The Notification Service's docker container and this service's docker container are a part of the same docker network.

@@ -1,9 +1,31 @@
 version: '2'
-
 services:
   amida-api:
     build:
       context: .
+
+    # Set environment variables from this file
+    env_file:
+    - .env
+
+    # Overwrite any env var defined in .env file (if required)
+    environment:
+    - DEBUG=amida-api-boilerplate:*
+    - MESSAGING_SERVICE_PG_DB=amida_messaging_microservice
+    - MESSAGING_SERVICE_PG_HOST=postgres
+    - MESSAGING_SERVICE_PG_PASSWORD=admin
+    - MESSAGING_SERVICE_PG_PORT=5432
+    - MESSAGING_SERVICE_PG_USER=postgres
+    - MESSAGING_SERVICE_PORT=4001
+
+    # Link to containers in another service.
+    # Links also express dependency between services in the same way as depends_on,
+    # so they determine the order of service startup.
+    links:
+    - postgres
+
+    ports:
+    - 4001:4001
     volumes:
       # Mounts the project directory on the host to /app inside the container,
       # allowing you to modify the code without having to rebuild the image.
@@ -13,34 +35,13 @@ services:
       # over to the new volume upon volume initialization.
       # node_modules from this new volume will be used and not from your local dev env.
 
+  postgres:
+    image: postgres:9.6
     # Expose ports [HOST:CONTAINER}
     ports:
-      - "4001:4001"
-
-    # Set environment variables from this file
-    env_file:
-      - .env
-
-    # Overwrite any env var defined in .env file (if required)
+    - 5432:5432
     environment:
-      - MESSAGING_SERVICE_G_DB=api
-      - MESSAGING_SERVICE_PG_PORT=5432
-      - MESSAGING_SERVICE_PG_HOST=postgres
-      - MESSAGING_SERVICE_PG_USER=api
-      - MESSAGING_SERVICE_PG_PASSWORD=boilerplate
-      - DEBUG=amida-api-boilerplate:*
-      - MESSAGING_SERVICE_PORT=4001
+    - POSTGRES_DB=${MESSAGING_SERVICE_PG_DB}
+    - POSTGRES_PASSWORD=${MESSAGING_SERVICE_PG_PASSWORD}
+    - POSTGRES_USER=${MESSAGING_SERVICE_PG_USER}
 
-    # Link to containers in another service.
-    # Links also express dependency between services in the same way as depends_on,
-    # so they determine the order of service startup.
-    links:
-      - postgres
-
-  postgres:
-    image: "postgres:9.4.11"
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=api
-      - POSTGRES_PASSWORD=boilerplate

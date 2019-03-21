@@ -51,7 +51,7 @@ module.exports = {
             },
         });
     },
-    down(queryInterface, Sequelize) {
+    down(queryInterface, Sequelize) { // eslint-disable-line no-unused-vars
         return true;
     },
     // down: (queryInterface, Sequelize) => queryInterface.dropTable('UserMessages'),
