@@ -26,8 +26,8 @@
     "start": "gulp serve",
     "start:debug": "cross-env DEBUG=amida-messaging-microservice:* yarn start",
     "test": "cross-env NODE_ENV=test mocha --opts .mocharc",
-    "test:check-coverage": "yarn test:coverage && istanbul check-coverage",
-    "test:coverage": "cross-env NODE_ENV=test ./node_modules/.bin/istanbul cover _mocha -- --ui bdd --reporter spec --colors --compilers js:babel-core/register server/tests --recursive",
+    "test:check-coverage": "yarn test:coverage && nyc check-coverage",
+    "test:coverage": "cross-env NODE_ENV=test nyc mocha --opts .mocharc",
     "test:watch": "yarn test --watch"
   },
   "dependencies": {
@@ -55,6 +55,7 @@
     "lodash": "4.17.5",
     "method-override": "3.0.0",
     "node-rest-client": "3.1.0",
+    "nyc": "false13.3.0",
     "passport": "0.4.0",
     "passport-jwt": "4.0.0",
     "pg": "6.1.6",
@@ -88,7 +89,6 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-util": "^3.0.7",
     "husky": "1.2.1",
-    "istanbul": "1.1.0-alpha.1",
     "mocha": "3.2.0"
   },
   "babel": {
