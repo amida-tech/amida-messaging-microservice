@@ -1,4 +1,5 @@
 # Amida Messaging Microservice
+[![Known Vulnerabilities](https://snyk.io/test/github/amida-tech/amida-messaging-microservice/badge.svg)](https://snyk.io/test/github/amida-tech/amida-messaging-microservice)
 [![dependencies Status](https://david-dm.org/amida-tech/amida-messaging-microservice/status.svg)](https://david-dm.org/amida-tech/amida-messaging-microservice)
 [![devDependencies Status](https://david-dm.org/amida-tech/amida-messaging-microservice/dev-status.svg)](https://david-dm.org/amida-tech/amida-messaging-microservice?type=dev)
 [![Jenkins CI](https://jenkins.amida.com/buildStatus/icon?job=Messaging%20Microservice%20Unit%20Test/)](https://jenkins.amida.com/job/Messaging%20Microservice%20Unit%20Test/)
