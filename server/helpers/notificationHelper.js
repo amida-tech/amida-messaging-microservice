@@ -4,7 +4,7 @@ const Client = require('node-rest-client').Client;
 
 const client = new Client();
 
-function sendPushNotifications(pushData) {
+function sendPushNotifications(data) {
     if (!config.pushNotificationsEnabled) return;
     const authArgs = {
         headers: { 'Content-Type': 'application/json' },
@@ -14,14 +14,14 @@ function sendPushNotifications(pushData) {
         },
     };
     // eslint-disable-next-line no-unused-vars
-    client.post(`${config.authMicroService}/auth/login`, authArgs, (data, response) => {
-        const { token } = data;
+    client.post(`${config.authMicroService}/auth/login`, authArgs, (authResData, response) => {
+        const { token } = authResData;
         const pushNotificationArgs = {
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            data: { pushData },
+            data: { data,  protocol: 'push'},
         };
         // eslint-disable-next-line no-unused-vars
-        client.post(`${config.notificationMicroservice}/notifications/sendPushNotifications`, pushNotificationArgs, (data2, response2) => {
+        client.post(`${config.notificationMicroservice}/notifications/send`, pushNotificationArgs, (notificationResData, notificationResponse) => {
         });
     });
 }
