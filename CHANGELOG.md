@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.5.1] -- 2019-05-14
+### Fixed
+- Patch for CVE-2019-5021 in `Dockerfile`. `node:8.16.0-alpine` uses a patched version of `alpine`.
+
+
 ## [2.5.0] -- 2018-12-12
 ### Added
 - [ORANGE-910] Create users on messaging at signup
