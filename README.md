@@ -294,7 +294,7 @@ wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 
 ```
 # Start the server with the AWS RDS cert bundle
-AUTH_SERVICE_PG_CA_CERT=$(cat rds-combined-ca-bundle.pem) yarn start
+MESSAGING_SERVICE_PG_CA_CERT=$(cat rds-combined-ca-bundle.pem) yarn start
 ```
 
 ## Integration With Amida Auth Microservice
