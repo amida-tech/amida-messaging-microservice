@@ -56,3 +56,6 @@ node_modules
 
 # build dir
 build
+
+# Visual Studio Code
+.vscode
