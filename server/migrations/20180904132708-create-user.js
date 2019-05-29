@@ -23,7 +23,7 @@ module.exports = {
             },
         });
     },
-    down(queryInterface, Sequelize) {
+    down() {
         return true;
     },
     // queryInterface.dropTable('Users'),

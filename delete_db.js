@@ -5,6 +5,7 @@ const conStringPri = `postgres://${config.postgres.user}:${config.postgres.passw
 
 pg.connect(conStringPri, (err, client, done) => { // eslint-disable-line no-unused-vars
     client.query(`DROP DATABASE IF EXISTS "${config.postgres.db}";`, (err1) => { // eslint-disable-line no-unused-vars
+        // eslint-disable-next-line no-console
         console.log('Database Deleted:', config.postgres.db);
         process.exit(0);
     });

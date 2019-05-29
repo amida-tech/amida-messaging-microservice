@@ -7,7 +7,6 @@ const uuidv4 = require('uuid/v4');
 const User = db.User;
 
 let adminToken = null;
-let usersUpdated = 0;
 
 module.exports = {
     up(queryInterface, Sequelize) {
@@ -56,7 +55,9 @@ module.exports = {
 
                     const userArray = [];
                     data.forEach((user) => {
+                        // eslint-disable-next-line no-param-reassign
                         user.username = user.username.toLowerCase();
+                        // eslint-disable-next-line no-param-reassign
                         user.email = user.email.toLowerCase();
                         userArray[user.email] = user;
                     });
@@ -70,25 +71,23 @@ module.exports = {
                         // console.log(users)
                         if (users.length > 0) {
                             users.forEach((user) => {
+                                // eslint-disable-next-line no-param-reassign
                                 user.username = user.username.toLowerCase();
                                 if (!(user.username in userArray)) {
                                     const newUUID = uuidv4();
+                                    // eslint-disable-next-line no-console
                                     console.log('User with email ', user.username, ' is missing from auth service');
                                     User.update({ uuid: newUUID }, { where: { id: user.id } });
-                                    usersUpdated++;
                                 } else {
                                     User.update(
                                         { uuid: userArray[user.username].uuid },
                                         { where: { id: user.id } });
-                                    usersUpdated++;
                                 }
                             });
                         }
                     });
                 });
-            }
-            );
-
+            });
     },
     down(queryInterface) {
         return queryInterface.removeColumn('Users', 'uuid');

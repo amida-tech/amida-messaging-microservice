@@ -1,13 +1,13 @@
 import express from 'express';
 import passport from 'passport';
+import httpStatus from 'http-status';
 import config from '../../config/config';
 import APIError from '../helpers/APIError.js';
-import httpStatus from 'http-status';
 
 import threadsCtrl from '../controllers/threads.controller';
 
 function guard() {
-    return function (req, res, next) {
+    return function checkScopes(req, res, next) {
         const { scopes } = req.user;
         const found = config.threadScopes.some(r => scopes.includes(r));
         if (found) {
