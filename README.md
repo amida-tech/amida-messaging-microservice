@@ -165,7 +165,7 @@ docker run -d --name {MESSAGING_SERVICE_PG_HOST} --network {DOCKER_NETWORK_NAME}
 postgres:9.6
 ```
 
-3. Create a `.env` file for use by this service's docker container. A good starting point is `.env.production`.
+3. Create a `.env` file for use by this service's docker container. A good starting point is `.env.example`.
 
 Note: To make push notifications work, follow the steps in section [Enabling Push Notifications with the Notifications Microservice](#Enabling-Push-Notifications-with-the-Notifications-Microservice)
 
@@ -302,10 +302,6 @@ MESSAGING_SERVICE_PG_CA_CERT=$(cat rds-combined-ca-bundle.pem) yarn start
 ##### `AUTH_MICROSERVICE_URL`
 
 URL of the Auth Service API.
-- `.env.production` sets this to to `https://amida-auth-microservice:4000/api/v1`, which assumes:
-  - `amida-auth-microservice` is the name of the docker container running the Auth Service.
-  - `4000` is the port the Auth Service is running on in its container.
-  - The Auth Service's docker container and this service's docker container are a part of the same docker network.
 
 ##### `JWT_SECRET`
 
@@ -317,10 +313,6 @@ Must match value of the JWT secret being used by your `amida-auth-microservice` 
 ##### `NOTIFICATION_MICROSERVICE_URL`
 
 URL of Amida Notification Microservice API.
-- `.env.production` sets this to to `https://amida-notification-microservice:4000/api/v1`, which assumes:
-  - `amida-notification-microservice` is the name of the docker container running the Notification Service.
-  - `4003` is the port the Notification Service is running on in its container.
-  - The Notification Service's docker container and this service's docker container are a part of the same docker network.
 
 ##### `PUSH_NOTIFICATIONS_ENABLED` (Required) [`false`]
 
@@ -329,9 +321,7 @@ URL of Amida Notification Microservice API.
 ##### `PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME`
 
 The username of the service user that authenticates against `amida-auth-microservice` and performs requests against the `amida-notification-microservice` API.
-- `.env.example` sets this to `oucuYaiN6pha3ahphiiT`, which is for development only. In production, set this to a different value.
 
 ##### `PUSH_NOTIFICATIONS_SERVICE_USER_PASSWORD`
 
 The password of the user specified by `PUSH_NOTIFICATIONS_SERVICE_USER_USERNAME`.
-- `.env.example` sets this to `@TestTest1`, which is for development only. In production, set this to a different value.

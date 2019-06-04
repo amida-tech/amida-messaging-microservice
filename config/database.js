@@ -17,8 +17,8 @@ if (postgres.sslEnabled) {
     config.ssl = postgres.sslEnabled;
     config.dialectOptions = {
         ssl: {
-            rejectUnauthorized: true
-        }
+            rejectUnauthorized: true,
+        },
     };
     if (postgres.sslCaCert) {
         config.dialectOptions.ssl.ca = postgres.sslCaCert;

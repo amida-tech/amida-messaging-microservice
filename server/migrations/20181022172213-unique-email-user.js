@@ -11,7 +11,7 @@ module.exports = {
             unique: true,
         });
     },
-    down(queryInterface, Sequelize) {
+    down(queryInterface) {
         return queryInterface.removeConstraint('Users', 'username_unique_idx');
     },
 };

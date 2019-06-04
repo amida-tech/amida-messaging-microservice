@@ -42,7 +42,7 @@ module.exports = {
             },
         });
     },
-    down(queryInterface, Sequelize) {
+    down() {
         return true;
     },
     // down: (queryInterface, Sequelize) => queryInterface.dropTable('UserThreads'),
