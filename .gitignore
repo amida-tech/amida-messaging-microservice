@@ -54,6 +54,11 @@ node_modules
 .env
 .env.test
 
+# keys
+*.key
+*.pub 
+
+
 # build dir
 build
 

@@ -15,6 +15,16 @@
 
 ## API Spec
 
+### Signing algorithm
+By default, the service expects JWTs to be signed with HMAC. This relies on a shared secret between the messaging service and the auth service.
+Whenever possible, you should use the RSA implementation. This can be activated by setting JWT_MODE='rsa' and setting the JWT_PUBLIC_KEY_PATH to the location of the public key
+published by the auth service. The public key should be available for the consuming service in order to verify the JWTs.
+
+To generate a keypair (for the auth service):
+ssh-keygen -t rsa -b 4096 -f private.key
+openssl rsa -in private.key -pubout -outform PEM -out private.key.pub
+
+### API Spec
 The spec can be viewed at https://amida-tech.github.io/amida-messaging-microservice/.
 
 To update the spec, first edit the files in the `docs` directory. Then run `aglio -i docs/src/docs.md --theme flatly -o index.html`.
@@ -296,6 +306,19 @@ wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
 # Start the server with the AWS RDS cert bundle
 MESSAGING_SERVICE_PG_CA_CERT=$(cat rds-combined-ca-bundle.pem) yarn start
 ```
+
+##### `MESSAGING_SERVICE_JWT_MODE`
+
+There variable corresponds with the type of JWT encryption that is being performed by the chosen auth service. 
+- Valid values are `hmac` or `rsa`.
+
+##### `MESSAGING_SERVICE_JWT_PUBLIC_KEY_PATH`
+
+The location of the public key published by the auth service
+
+##### `MESSAGING_SERVICE_TEST_TOKEN_RSA`
+
+This is the a RSA encrypted JWT that is used by this repo's automated test suite when it makes requests.
 
 ## Integration With Amida Auth Microservice
 
